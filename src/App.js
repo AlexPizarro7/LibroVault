@@ -45,17 +45,42 @@ function LibraryList() {
   );
 }
 
-
 function Books() {
-  const { libraries, setLibraries, selectedLibrary } = useContext(LibraryContext);
-  const [searchTerm, setSearchTerm] = useState('');
+  const { libraries, setLibraries, selectedLibrary, setSelectedLibrary } = useContext(LibraryContext);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [translator, setTranslator] = useState('');
   const [publicationDate, setPublicationDate] = useState('');
+  const [edition, setEdition] = useState('');
+  const [volumeNumber, setVolumeNumber] = useState('');
   const [genre, setGenre] = useState('');
+  const [subgenre, setSubgenre] = useState('');
+  const [isbn, setIsbn] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [edit, setEdit] = useState(null);
+  const [sortMethod, setSortMethod] = useState('default');
+
+  const changeLibraryName = (newName) => {
+    const updatedLibraries = libraries.map(lib => {
+      if (lib === selectedLibrary) {
+        lib.name = newName;
+      }
+      return lib;
+    });
+    setLibraries(updatedLibraries);
+  };
+
+  const deleteLibrary = () => {
+    const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
+    setLibraries(updatedLibraries);
+    setSelectedLibrary(null);
+  };
 
   const addBook = (book) => {
+    if (!book.title || !book.author || !book.genre) {
+      alert('Please complete the Title, Author, and Genre fields to add the book.');
+      return;
+    }
     const updatedLibraries = libraries.map(lib => {
       if (lib === selectedLibrary) {
         lib.books.push(book);
@@ -63,9 +88,37 @@ function Books() {
       return lib;
     });
     setLibraries(updatedLibraries);
+    resetFields();
+  };
+
+  const deleteBook = (bookToDelete) => {
+    const updatedLibraries = libraries.map(lib => {
+      if (lib === selectedLibrary) {
+        lib.books = lib.books.filter(book => book !== bookToDelete);
+      }
+      return lib;
+    });
+    setLibraries(updatedLibraries);
+  };
+
+  const editButton = (book) => {
+    setTitle(book.title);
+    setAuthor(book.author);
+    setTranslator(book.translator);
+    setPublicationDate(book.publicationDate);
+    setEdition(book.edition);
+    setVolumeNumber(book.volumeNumber);
+    setGenre(book.genre);
+    setSubgenre(book.subgenre);
+    setIsbn(book.isbn);
+    setEdit(book);
   };
 
   const editBook = (editedBook) => {
+    if (!editedBook.title || !editedBook.author || !editedBook.genre) {
+      alert('Please complete the Title, Author, and Genre fields to edit the book.');
+      return;
+    }
     const updatedLibraries = libraries.map(lib => {
       if (lib === selectedLibrary) {
         lib.books = lib.books.map(book => {
@@ -78,45 +131,56 @@ function Books() {
       return lib;
     });
     setLibraries(updatedLibraries);
+    resetFields();
+  };
+
+  const resetFields = () => {
+    setTitle('');
+    setAuthor('');
+    setPublicationDate('');
+    setGenre('');
+    setTranslator('');
+    setEdition('');
+    setVolumeNumber('');
+    setSubgenre('');
+    setIsbn('');
     setEdit(null);
   };
 
+  let searchedBooks = selectedLibrary.books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const deleteBook = (book) => {
-    const updatedLibraries = libraries.map(lib => {
-      if (lib === selectedLibrary) {
-        const index = lib.books.findIndex(b => b === book);
-        if (index !== -1) {
-          lib.books.splice(index, 1);
-        }
-      }
-      return lib;
-    });
-    setLibraries(updatedLibraries);
-    setEdit(null);
-  };
-
-  const editButton = (book) => {
-    setEdit(book);
-    setTitle(book.title);
-    setAuthor(book.author);
-    setPublicationDate(book.publicationDate);
-    setGenre(book.genre);
-  };
-
-  const searchedBooks = selectedLibrary.books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  if (sortMethod === 'alphabetical') {
+    searchedBooks.sort((a, b) => a.title.localeCompare(b.title));
+  }
 
   return (
     <div className="books">
       <h2>{selectedLibrary.name}</h2>
+      <button onClick={() => {
+        const newName = prompt("Edit library name");
+        if (newName) changeLibraryName(newName);
+      }}>
+        Edit Library Name
+      </button>
+      <button onClick={deleteLibrary}>Delete Library</button>
       <input type="text" placeholder="Search for a book..." onChange={e => setSearchTerm(e.target.value)} />
+
+      <select value={sortMethod} onChange={(e) => setSortMethod(e.target.value)}>
+        <option value="default">Default Order</option>
+        <option value="alphabetical">Sort Alphabetically By Title</option>
+      </select>
 
       {searchedBooks.map((book, index) => (
         <div key={index}>
           <h4>{book.title}</h4>
           <p>{book.author}</p>
+          <p>{book.translator}</p>
           <p>{book.publicationDate}</p>
+          <p>{book.edition}</p>
+          <p>{book.volumeNumber}</p>
           <p>{book.genre}</p>
+          <p>{book.subgenre}</p>
+          <p>{book.isbn}</p>
           <button onClick={() => deleteBook(book)}>Delete book</button>
           <button onClick={() => editButton(book)}>Edit book</button>
         </div>
@@ -125,25 +189,16 @@ function Books() {
       <div>
         <input type="text" placeholder="Book Title" value={title} onChange={e => setTitle(e.target.value)} />
         <input type="text" placeholder="Author" value={author} onChange={e => setAuthor(e.target.value)} />
+        <input type="text" placeholder="Translator" value={translator} onChange={e => setTranslator(e.target.value)} />
         <input type="text" placeholder="Publication Date" value={publicationDate} onChange={e => setPublicationDate(e.target.value)} />
+        <input type="text" placeholder="Edition" value={edition} onChange={e => setEdition(e.target.value)} />
+        <input type="text" placeholder="Volume Number" value={volumeNumber} onChange={e => setVolumeNumber(e.target.value)} />
         <input type="text" placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
-        {edit ? (
-          <button onClick={() => editBook({ title, author, publicationDate, genre })}>
-            Save Edits
-          </button>
-        ) : (
-          <button onClick={() => {
-            if (title && author) {
-              addBook({ title, author, publicationDate, genre });
-              setTitle('');
-              setAuthor('');
-              setPublicationDate('');
-              setGenre('');
-            }
-          }}>
-            + Add Book
-          </button>
-        )}
+        <input type="text" placeholder="Subgenre" value={subgenre} onChange={e => setSubgenre(e.target.value)} />
+        <input type="text" placeholder="ISBN" value={isbn} onChange={e => setIsbn(e.target.value)} />
+        {edit
+          ? <button onClick={() => editBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>Update Book</button>
+          : <button onClick={() => addBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>Add Book</button>}
       </div>
     </div>
   );
