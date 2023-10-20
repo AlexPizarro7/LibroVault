@@ -151,6 +151,10 @@ function Books() {
 
   if (sortMethod === 'alphabetical') {
     searchedBooks.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortMethod === 'byAuthor') {
+    searchedBooks.sort((a, b) => a.author.localeCompare(b.author));
+  } else if (sortMethod === 'byGenre') {
+    searchedBooks.sort((a, b) => a.genre.localeCompare(b.genre));
   }
 
   return (
@@ -168,6 +172,8 @@ function Books() {
       <select value={sortMethod} onChange={(e) => setSortMethod(e.target.value)}>
         <option value="default">Default Order</option>
         <option value="alphabetical">Sort Alphabetically By Title</option>
+        <option value="byAuthor">Sort Alphabetically By Author</option>
+        <option value="byGenre">Group By Genre</option>
       </select>
 
       {searchedBooks.map((book, index) => (
@@ -194,11 +200,18 @@ function Books() {
         <input type="text" placeholder="Edition" value={edition} onChange={e => setEdition(e.target.value)} />
         <input type="text" placeholder="Volume Number" value={volumeNumber} onChange={e => setVolumeNumber(e.target.value)} />
         <input type="text" placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
-        <input type="text" placeholder="Subgenre" value={subgenre} onChange={e => setSubgenre(e.target.value)} />
+        <input type="text" placeholder="Sub-genre" value={subgenre} onChange={e => setSubgenre(e.target.value)} />
         <input type="text" placeholder="ISBN" value={isbn} onChange={e => setIsbn(e.target.value)} />
-        {edit
-          ? <button onClick={() => editBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>Update Book</button>
-          : <button onClick={() => addBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>Add Book</button>}
+
+        {edit ? (
+          <button onClick={() => editBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>
+            Update Book
+          </button>
+        ) : (
+          <button onClick={() => addBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>
+            Add Book
+          </button>
+        )}
       </div>
     </div>
   );
