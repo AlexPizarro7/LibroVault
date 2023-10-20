@@ -54,8 +54,58 @@ function Books() {
   const [publicationDate, setPublicationDate] = useState('');
   const [genre, setGenre] = useState('');
   const [edit, setEdit] = useState(null);
+  const [translator, setTranslator] = useState('');
+  //new things added - eric 
+  const [edition, setEdition] = useState('');
+  const [volumeNumber, setVolumeNumber] = useState('');
+  const [subgenre, setSubgenre] = useState('');
+  const [isbn, setIsbn] = useState('');
+  const [bookId, setBookId] = useState(''); // Add a state variable for the book ID
+
+  
+
+ 
+
 
   const addBook = (book) => {
+    //Book Data to send to API 
+    const bookData = {
+      title,
+      author,
+      translator,
+      publicationDate,
+      edition,
+      volumeNumber,
+      genre,
+      subgenre,
+      isbn,
+    };
+
+    fetch('http://localhost:8080/api/books', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bookData),
+    })
+      .then((response) => response.json())
+      .then((book) => {
+        if (book.id) {
+          console.log('New book added successfully with ID:', book.id);
+          // You can update your UI or perform other actions upon successful book addition.
+
+          // Store the book ID in your component's state
+          setBookId(book.id);
+        } else {
+          console.error('Failed to add book');
+          // Handle errors and provide user feedback for failed book addition.
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Handle network errors or other issues.
+      });
+
     const updatedLibraries = libraries.map(lib => {
       if (lib === selectedLibrary) {
         lib.books.push(book);
@@ -66,7 +116,44 @@ function Books() {
   };
 
   const editBook = (editedBook) => {
-    const updatedLibraries = libraries.map(lib => {
+    // Ensure you have a valid bookId stored in the state variable
+    if (bookId) {
+      // Prepare the updated book data 
+      const updatedBookData = {
+        title: editedBook.title,
+        author: editedBook.author,
+        translator: editedBook.translator,
+        publicationDate: editedBook.publicationDate,
+        edition: editedBook.edition,
+        volumeNumber: editedBook.volumeNumber,
+        genre: editedBook.genre,
+        subgenre: editedBook.subgenre,
+        isbn: editedBook.isbn,
+      };
+  
+      // Send a PUT request to update the book with the bookId
+      fetch(`http://localhost:8080/api/books/${bookId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedBookData),
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log('Book updated successfully');
+            // You can update your UI or perform other actions upon successful book update.
+          } else {
+            console.error('Failed to update book');
+            // Handle errors and provide user feedback for failed book update.
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          // Handle network errors or other issues.
+        });
+  
+          const updatedLibraries = libraries.map(lib => {
       if (lib === selectedLibrary) {
         lib.books = lib.books.map(book => {
           if (book === edit) {
@@ -80,9 +167,36 @@ function Books() {
     setLibraries(updatedLibraries);
     setEdit(null);
   };
+  };
+  
+
 
 
   const deleteBook = (book) => {
+    if (bookId) {
+      // Make a DELETE request to the backend API to delete the book with the specified bookId
+      fetch(`http://localhost:8080/api/books/remove/${bookId}`, {
+        method: 'DELETE',
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log('Book deleted successfully');
+            // Update the frontend state if needed (you may not need to do anything here since you already removed it in the frontend)
+            // setLibraries(updatedLibraries);
+            setEdit(null);
+          } else {
+            console.error('Failed to delete book');
+            // Handle errors and provide user feedback for failed book deletion.
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          // Handle network errors or other issues.
+        });
+    } else {
+      console.error('bookId is missing or invalid');
+      // Handle the case where bookId is missing or invalid (provide user feedback or error handling).
+    }
     const updatedLibraries = libraries.map(lib => {
       if (lib === selectedLibrary) {
         const index = lib.books.findIndex(b => b === book);
@@ -96,13 +210,23 @@ function Books() {
     setEdit(null);
   };
 
+  //added the remaining attributes 
   const editButton = (book) => {
+    // hold the property values, and the values themselves are constants 
+    const { title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn } = book;
     setEdit(book);
-    setTitle(book.title);
-    setAuthor(book.author);
-    setPublicationDate(book.publicationDate);
-    setGenre(book.genre);
+    setTitle(title);
+    setAuthor(author);
+    setTranslator(translator);
+    setPublicationDate(publicationDate);
+    setEdition(edition);
+    setVolumeNumber(volumeNumber);
+    setGenre(genre);
+    setSubgenre(subgenre);
+    setIsbn(isbn);
   };
+  
+  
 
   const searchedBooks = selectedLibrary.books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -123,14 +247,30 @@ function Books() {
       ))}
 
       <div>
-        <input type="text" placeholder="Book Title" value={title} onChange={e => setTitle(e.target.value)} />
-        <input type="text" placeholder="Author" value={author} onChange={e => setAuthor(e.target.value)} />
-        <input type="text" placeholder="Publication Date" value={publicationDate} onChange={e => setPublicationDate(e.target.value)} />
-        <input type="text" placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
+        {/* Added all the attributes to the book - eric */}
+      <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input type="text" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} />
+      <input type="text" placeholder="Translator" value={translator} onChange={(e) => setTranslator(e.target.value)} />
+      <input type="text" placeholder="Publication Date" value={publicationDate} onChange={(e) => setPublicationDate(e.target.value)} />
+      <input type="text" placeholder="Edition" value={edition} onChange={(e) => setEdition(e.target.value)} />
+      <input type="text" placeholder="Volume Number" value={volumeNumber} onChange={(e) => setVolumeNumber(e.target.value)} />
+      <input type="text" placeholder="Genre" value={genre} onChange={(e) => setGenre(e.target.value)} />
+      <input type="text" placeholder="Subgenre" value={subgenre} onChange={(e) => setSubgenre(e.target.value)} />
+      <input type="text" placeholder="ISBN" value={isbn} onChange={(e) => setIsbn(e.target.value)} />
+       {/* Added all the attributes*/}
         {edit ? (
-          <button onClick={() => editBook({ title, author, publicationDate, genre })}>
-            Save Edits
-          </button>
+        <button onClick={() => editBook({ 
+          title,
+          author,
+          translator,
+          publicationDate,
+          edition,
+          volumeNumber,
+          genre,
+          subgenre,
+          isbn
+        })}>Save Edits</button>
+        
         ) : (
           <button onClick={() => {
             if (title && author) {
