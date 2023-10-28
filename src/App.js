@@ -1,8 +1,13 @@
 import React, { useState, useContext, createContext } from 'react';
 import './App.css';
 
+//This context allows child components to access and modify the app's state
 const LibraryContext = createContext();
 
+//This is the App component, the main component
+//uses UseStat eo create 2 state variables: libraries (list of libraries) and selectedLibrary(the currently selected library)
+
+//libraryContext.Provider wraps the child components, so they can access the defined values of the values
 function App() {
   const [libraries, setLibraries] = useState([]);
   const [selectedLibrary, setSelectedLibrary] = useState(null);
@@ -20,6 +25,8 @@ function App() {
   );
 }
 
+//This is the LibraryList component, this is the sidebar that has the list of libraries.
+//This component uses 'useContext' to access 'LibraryContext' and be able to use its functions 
 function LibraryList() {
   const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
 
@@ -45,6 +52,12 @@ function LibraryList() {
   );
 }
 
+//This is the Books Component 
+//This is the main area content that displays the information and details of each book in a library
+
+//This component defines the following functions: changeLibraryName, deleteLibrary, addBook, deleteBook, editButton, editBook, resetFields
+
+//This also has the algorithms to search books and sort them
 function Books() {
   const { libraries, setLibraries, selectedLibrary, setSelectedLibrary } = useContext(LibraryContext);
   const [title, setTitle] = useState('');
