@@ -45,7 +45,8 @@ function LibraryList() {
   );
 }
 
-function AddBookPopup({ onConfirm, onCancel }) {
+function Books() {
+  const { libraries, setLibraries, selectedLibrary, setSelectedLibrary } = useContext(LibraryContext);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [translator, setTranslator] = useState('');
@@ -55,69 +56,162 @@ function AddBookPopup({ onConfirm, onCancel }) {
   const [genre, setGenre] = useState('');
   const [subgenre, setSubgenre] = useState('');
   const [isbn, setIsbn] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [edit, setEdit] = useState(null);
+  const [sortMethod, setSortMethod] = useState('default');
 
-  const handleConfirm = () => {
-    onConfirm({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn });
-    onCancel();
-  };
-
-  return (
-    <div className="popup">
-      <input type="text" placeholder="Book Title" value={title} onChange={e => setTitle(e.target.value)} />
-      <input type="text" placeholder="Author" value={author} onChange={e => setAuthor(e.target.value)} />
-      <input type="text" placeholder="Translator" value={translator} onChange={e => setTranslator(e.target.value)} />
-      <input type="text" placeholder="Publication Date" value={publicationDate} onChange={e => setPublicationDate(e.target.value)} />
-      <input type="text" placeholder="Edition" value={edition} onChange={e => setEdition(e.target.value)} />
-      <input type="text" placeholder="Volume Number" value={volumeNumber} onChange={e => setVolumeNumber(e.target.value)} />
-      <input type="text" placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
-      <input type="text" placeholder="Sub-genre" value={subgenre} onChange={e => setSubgenre(e.target.value)} />
-      <input type="text" placeholder="ISBN" value={isbn} onChange={e => setIsbn(e.target.value)} />
-      <button onClick={handleConfirm}>Confirm</button>
-      <button onClick={onCancel}>Cancel</button>
-    </div>
-  );
-}
-
-function Books() {
-  const { libraries, setLibraries, selectedLibrary } = useContext(LibraryContext);
-  const [showAddBookPopup, setShowAddBookPopup] = useState(false);
-
-  const addBook = (book) => {
-    const updatedLibraries = libraries.map((lib) => {
+  const changeLibraryName = (newName) => {
+    const updatedLibraries = libraries.map(lib => {
       if (lib === selectedLibrary) {
-        return { ...lib, books: [...lib.books, book] };
+        lib.name = newName;
       }
       return lib;
     });
-
     setLibraries(updatedLibraries);
   };
+
+  const deleteLibrary = () => {
+    const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
+    setLibraries(updatedLibraries);
+    setSelectedLibrary(null);
+  };
+
+  const addBook = (book) => {
+    if (!book.title || !book.author || !book.genre) {
+      alert('Please complete the Title, Author, and Genre fields to add the book.');
+      return;
+    }
+    const updatedLibraries = libraries.map(lib => {
+      if (lib === selectedLibrary) {
+        lib.books.push(book);
+      }
+      return lib;
+    });
+    setLibraries(updatedLibraries);
+    resetFields();
+  };
+
+  const deleteBook = (bookToDelete) => {
+    const updatedLibraries = libraries.map(lib => {
+      if (lib === selectedLibrary) {
+        lib.books = lib.books.filter(book => book !== bookToDelete);
+      }
+      return lib;
+    });
+    setLibraries(updatedLibraries);
+  };
+
+  const editButton = (book) => {
+    setTitle(book.title);
+    setAuthor(book.author);
+    setTranslator(book.translator);
+    setPublicationDate(book.publicationDate);
+    setEdition(book.edition);
+    setVolumeNumber(book.volumeNumber);
+    setGenre(book.genre);
+    setSubgenre(book.subgenre);
+    setIsbn(book.isbn);
+    setEdit(book);
+  };
+
+  const editBook = (editedBook) => {
+    if (!editedBook.title || !editedBook.author || !editedBook.genre) {
+      alert('Please complete the Title, Author, and Genre fields to edit the book.');
+      return;
+    }
+    const updatedLibraries = libraries.map(lib => {
+      if (lib === selectedLibrary) {
+        lib.books = lib.books.map(book => {
+          if (book === edit) {
+            return editedBook;
+          }
+          return book;
+        });
+      }
+      return lib;
+    });
+    setLibraries(updatedLibraries);
+    resetFields();
+  };
+
+  const resetFields = () => {
+    setTitle('');
+    setAuthor('');
+    setPublicationDate('');
+    setGenre('');
+    setTranslator('');
+    setEdition('');
+    setVolumeNumber('');
+    setSubgenre('');
+    setIsbn('');
+    setEdit(null);
+  };
+
+  let searchedBooks = selectedLibrary.books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  if (sortMethod === 'alphabetical') {
+    searchedBooks.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortMethod === 'byAuthor') {
+    searchedBooks.sort((a, b) => a.author.localeCompare(b.author));
+  } else if (sortMethod === 'byGenre') {
+    searchedBooks.sort((a, b) => a.genre.localeCompare(b.genre));
+  }
 
   return (
     <div className="books">
       <h2>{selectedLibrary.name}</h2>
-      <button onClick={() => setShowAddBookPopup(true)}>Add Book</button>
-      
-      {showAddBookPopup && (
-        <AddBookPopup
-          onConfirm={(book) => addBook(book)}
-          onCancel={() => setShowAddBookPopup(false)}
-        />
-      )}
+      <button onClick={() => {
+        const newName = prompt("Edit library name");
+        if (newName) changeLibraryName(newName);
+      }}>
+        Edit Library Name
+      </button>
+      <button onClick={deleteLibrary}>Delete Library</button>
+      <input type="text" placeholder="Search for a book..." onChange={e => setSearchTerm(e.target.value)} />
 
-      <div className="book-list">
-        {selectedLibrary.books.map((book, index) => (
-          <div key={index}>
-            <div>{book.title} by {book.author}</div>
-            <div>{book.translator}</div>
-            <div>{book.publicationDate}</div>
-            <div>{book.edition}</div>
-            <div>{book.volumeNumber}</div>
-            <div>{book.genre}</div>
-            <div>{book.subgenre}</div>
-            <div>{book.isbn}</div>
-          </div>
-        ))}
+      <select value={sortMethod} onChange={(e) => setSortMethod(e.target.value)}>
+        <option value="default">Default Order</option>
+        <option value="alphabetical">Sort Alphabetically By Title</option>
+        <option value="byAuthor">Sort Alphabetically By Author</option>
+        <option value="byGenre">Group By Genre</option>
+      </select>
+
+      {searchedBooks.map((book, index) => (
+        <div key={index}>
+          <h4>{book.title}</h4>
+          <p>{book.author}</p>
+          <p>{book.translator}</p>
+          <p>{book.publicationDate}</p>
+          <p>{book.edition}</p>
+          <p>{book.volumeNumber}</p>
+          <p>{book.genre}</p>
+          <p>{book.subgenre}</p>
+          <p>{book.isbn}</p>
+          <button onClick={() => deleteBook(book)}>Delete book</button>
+          <button onClick={() => editButton(book)}>Edit book</button>
+        </div>
+      ))}
+
+      <div>
+        <input type="text" placeholder="Book Title" value={title} onChange={e => setTitle(e.target.value)} />
+        <input type="text" placeholder="Author" value={author} onChange={e => setAuthor(e.target.value)} />
+        <input type="text" placeholder="Translator" value={translator} onChange={e => setTranslator(e.target.value)} />
+        <input type="text" placeholder="Publication Date" value={publicationDate} onChange={e => setPublicationDate(e.target.value)} />
+        <input type="text" placeholder="Edition" value={edition} onChange={e => setEdition(e.target.value)} />
+        <input type="text" placeholder="Volume Number" value={volumeNumber} onChange={e => setVolumeNumber(e.target.value)} />
+        <input type="text" placeholder="Genre" value={genre} onChange={e => setGenre(e.target.value)} />
+        <input type="text" placeholder="Sub-genre" value={subgenre} onChange={e => setSubgenre(e.target.value)} />
+        <input type="text" placeholder="ISBN" value={isbn} onChange={e => setIsbn(e.target.value)} />
+
+        {edit ? (
+          <button onClick={() => editBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>
+            Update Book
+          </button>
+        ) : (
+          <button onClick={() => addBook({ title, author, translator, publicationDate, edition, volumeNumber, genre, subgenre, isbn })}>
+            Add Book
+          </button>
+        )}
       </div>
     </div>
   );
