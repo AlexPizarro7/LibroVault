@@ -1,3 +1,20 @@
+# Basic info
+Main application Component : the actual application 
+
+Create User Component : details on how to create user  // Carl 
+
+Home Component : details about the login page and more Documentation   //Carl 
+
+App Router : details about the routing 
+
+You might need to install:  npm install react-router-dom
+
+
+
+./ means current directory
+../ means parent directory 
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
