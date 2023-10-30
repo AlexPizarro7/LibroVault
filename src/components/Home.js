@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; //import navigate used for changing "pages" or to redirect 
 import backgroundImage from '../images/bookshelf.png'; //import the image 
 import CreateAccount from './CreateAccount'; // Import the CreateAccount component
+import '../LoginPage.css';
 
 
 /*"Home Componet is used as the main user interface(the login page) , has the features of log in and create user

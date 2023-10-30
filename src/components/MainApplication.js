@@ -73,7 +73,11 @@ function Books() {
   const [isbn, setIsbn] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [edit, setEdit] = useState(null);
-  const [sortMethod, setSortMethod] = useState('default');
+  const [sortMethod, setSortMethod] = useState
+  ('default');
+  const [bookId, setBookId] = useState('');
+
+
 
   const changeLibraryName = (newName) => {
     const updatedLibraries = libraries.map(lib => {
@@ -104,6 +108,7 @@ function Books() {
     });
     setLibraries(updatedLibraries);
     resetFields();
+              
   };
 
   const deleteBook = (bookToDelete) => {
