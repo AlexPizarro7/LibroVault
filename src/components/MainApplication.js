@@ -154,6 +154,31 @@ function Books() {
 
 
     const deleteBook = (bookToDelete) => {
+        if (bookId) {
+            // Make a DELETE request to the backend API to delete the book with the specified bookId
+            fetch(`http://localhost:8080/api/books/remove/${bookId}`, {
+              method: 'DELETE',
+            })
+              .then((response) => {
+                if (response.ok) {
+                  console.log('Book deleted successfully');
+                  // Update the frontend state if needed (you may not need to do anything here since you already removed it in the frontend)
+                  // setLibraries(updatedLibraries);
+                  setEdit(null);
+                } else {
+                  console.error('Failed to delete book');
+                  // Handle errors and provide user feedback for failed book deletion.
+                }
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+                // Handle network errors or other issues.
+              });
+          } else {
+            console.error('bookId is missing or invalid');
+            // Handle the case where bookId is missing or invalid (provide user feedback or error handling).
+          }
+    
         const updatedLibraries = libraries.map(lib => {
             if (lib === selectedLibrary) {
                 lib.books = lib.books.filter(book => book !== bookToDelete);
@@ -181,6 +206,44 @@ function Books() {
             alert('Please complete the Title, Author, and Genre fields to edit the book.');
             return;
         }
+
+            // Ensure you have a valid bookId stored in the state variable
+    if (bookId) {
+        // Prepare the updated book data 
+        const updatedBookData = {
+          title: editedBook.title,
+          author: editedBook.author,
+          translator: editedBook.translator,
+          publicationDate: editedBook.publicationDate,
+          edition: editedBook.edition,
+          volumeNumber: editedBook.volumeNumber,
+          genre: editedBook.genre,
+          subgenre: editedBook.subgenre,
+          isbn: editedBook.isbn,
+        };
+    
+        // Send a PUT request to update the book with the bookId
+        fetch(`http://localhost:8080/api/books/${bookId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedBookData),
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log('Book updated successfully');
+              // You can update your UI or perform other actions upon successful book update.
+            } else {
+              console.error('Failed to update book');
+              // Handle errors and provide user feedback for failed book update.
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            // Handle network errors or other issues.
+          });
+
         const updatedLibraries = libraries.map(lib => {
             if (lib === selectedLibrary) {
                 lib.books = lib.books.map(book => {
@@ -195,6 +258,7 @@ function Books() {
         setLibraries(updatedLibraries);
         resetFields();
     };
+    }; //end of editBook
 
     const resetFields = () => {
         setTitle('');
