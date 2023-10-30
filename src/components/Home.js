@@ -6,8 +6,6 @@ import CreateAccount from './CreateAccount'; // Import the CreateAccount compone
 
 /*"Home Componet is used as the main user interface(the login page) , has the features of log in and create user
 
-
-
 */ 
 function Home() {
 
