@@ -14,6 +14,7 @@ function CreateAccount() {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const navigate = useNavigate(); // Define the navigate function
+  const [userId, setUserId] = useState('');
 
 
 //MODIFY THIS CARL
@@ -21,6 +22,13 @@ function CreateAccount() {
     if (password === rePassword) {
       // Simulate account creation
       console.log('Account created successfully');
+
+      fetch('http://localhost:8080/api/users', {
+        method: 'POST',
+        headers
+
+      })
+
 
       // Simulate automatic login after a delay (e.g., 3 seconds)
       // setTimeout(() => {

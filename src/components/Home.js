@@ -23,6 +23,8 @@ function Home() {
   const [password, setPassword] = useState('');
   const [isCreateAccountVisible, setCreateAccountVisible] = useState(false);
   const navigate = useNavigate();  //used to navigate to the main application 
+  const [userId, setUserId] = useState('');
+  
 
   //Just toggles the visibility of the create account form ( when clicked it shows)
   const toggleCreateAccount = () => {
@@ -31,6 +33,8 @@ function Home() {
 
   //Carl start here refrence the front the end code from erics branch *****************
   const handleLogin = () => {
+
+
     if (username === 'u' && password === 'p') {
       navigate('/main-application');
     } else {
