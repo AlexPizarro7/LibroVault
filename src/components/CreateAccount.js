@@ -17,18 +17,36 @@ function CreateAccount() {
   const [userId, setUserId] = useState('');
 
 
-//MODIFY THIS CARL
-  const handleCreateAccount = () => {
+// user makes new account
+  const handleCreateAccount = (user) => {
+    if (!user.username || !user.password) {
+      alert('Please enter a username and password.')
+      return;
+    }
+
+    const userData = {
+      username,
+      password,
+    };
+
     if (password === rePassword) {
-      // Simulate account creation
-      console.log('Account created successfully');
-
-      fetch('http://localhost:8080/api/users', {
+      fetch('http://localhost:8080/api/users/createUser', {
         method: 'POST',
-        headers
-
+        body: JSON.stringify
       })
-
+        .then((response) => response.json())
+        .then((user) => {
+          if (user.userId) {
+            console.log('New user created with ID:', user.userId);
+            setUserId(user.userId);
+          } else {
+            console.error('User creation failed.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          // handle network errors or other issues
+      })
 
       // Simulate automatic login after a delay (e.g., 3 seconds)
       // setTimeout(() => {
@@ -39,8 +57,10 @@ function CreateAccount() {
       //   handleLogin();
       // }, 3000);
     } else {
-      alert('Passwords do not match , Re enter it Dumbass ');
+      alert('The password fields do not match. Please try again.');
     }
+
+    
   };
 
   // //MODIFY THIS CARL 
