@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; //import navigate used for changing "pages" or to redirect 
-import backgroundImage from '../images/bookshelf.png'; //import the image 
 import CreateAccount from './CreateAccount'; // Import the CreateAccount component
-import '../LoginPage.css';
+import './Home.css'; //Import home.css for finished styling
 
 
 /*"Home Componet is used as the main user interface(the login page) , has the features of log in and create user
@@ -40,13 +39,13 @@ function Home() {
 
  //when styling this div use "home-container"
  //onChange{(e)} username or password  state variable in response to changes in the input field.
+ //h2 and body added to differentiate in .css file.
   return (
     <div className="home-container">
-      {/* Displays the background image*/ }
-      <img src={backgroundImage} alt="Background Image" />
        {/* Displays the Title*/ }
       <h1>Welcome to Libro Vault</h1>
-       {/*Input field for username*/ }
+          {/*Input field for username*//*h2 added for css formatting*/}
+          <h2>
       <input
         type="text"
         placeholder="Username"
@@ -66,7 +65,14 @@ function Home() {
       <button onClick={toggleCreateAccount}>Create Account</button>
         {/*Conditionally render the create account component based on isCreateAccountVisible*/ }
       {isCreateAccountVisible && <CreateAccount />}
+          </h2>
+          {/*Placeholder for empty space below login and create account.*/ }
+          <body>
+              "User Feedback Section And Site Description Placeholder"
+          </body>
     </div>
+          
+
   );
 }
 

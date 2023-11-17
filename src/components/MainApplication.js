@@ -1,5 +1,6 @@
 import React, { useState, useContext, createContext } from 'react';
 import '../App.css';
+import './MainApplication.css';
 
 
 //This context allows child components to access and modify the app's state
