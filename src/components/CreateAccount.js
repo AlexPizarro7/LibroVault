@@ -19,10 +19,11 @@ function CreateAccount() {
 
 // user makes new account
   const handleCreateAccount = (user) => {
-    if (!user.username || !user.password) {
-      alert('Please enter a username and password.')
-      return;
-    }
+    
+    //if (!user.username || !user.password) {
+      //alert('Please enter a username and password.')
+      //return;
+    //}
 
     const userData = {
       username,
@@ -32,13 +33,16 @@ function CreateAccount() {
     if (password === rePassword) {
       fetch('http://localhost:8080/api/users/createUser', {
         method: 'POST',
-        body: JSON.stringify
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
       })
         .then((response) => response.json())
         .then((user) => {
-          if (user.userId) {
-            console.log('New user created with ID:', user.userId);
-            setUserId(user.userId);
+          if (user.id) {
+            console.log('New user created with ID:', user.id);
+            setUserId(user.id);
           } else {
             console.error('User creation failed.');
           }
@@ -59,17 +63,31 @@ function CreateAccount() {
     } else {
       alert('The password fields do not match. Please try again.');
     }
-
-    
   };
 
-  // //MODIFY THIS CARL 
-  // const handleLogin = () => {
-  //   // Replace this with your actual login logic
-  //   // For now, you can display a message or navigate to the main application
-  //   console.log('Simulated login after account creation');
-  //   navigate('/main-application');
-  // };
+  const handleDeleteAccount = (userToDelete) => {
+    if (userId) {
+      // make DELETE request to backend API to delete user
+      fetch(`http://localhost:8080/api/users/remove/${userId}` , {
+        method: 'DELETE',
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log('User deleted successfully');
+          } else {
+            console.error('Failed to delete user');
+            // handle errors and provide user feedback for failure
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+            // handle network errors or other issues
+        });
+    } else {
+      console.error('userID is missing or invalid');
+      // case where userID doesn't exist
+    }
+  }
 
   return (
     <div className="create-account-container">
