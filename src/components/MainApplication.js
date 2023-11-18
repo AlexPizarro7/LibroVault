@@ -1,6 +1,5 @@
 import React, { useState, useContext, createContext } from 'react';
 import '../App.css';
-import './MainApplication.css';
 
 
 //This context allows child components to access and modify the app's state
@@ -131,7 +130,7 @@ function Books() {
                     // Store the book ID in your component's state
                     setBookId(book.id);
                 } else {
-                    console.error('Failed to add book');
+                    console.error('Failed to add book, Ensure the following attributes are filled in: Author, Title, Genre');
                     // Handle errors and provide user feedback for failed book addition.
                 }
             })

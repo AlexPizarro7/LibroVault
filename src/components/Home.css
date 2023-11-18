@@ -46,3 +46,89 @@ body {
     color: #ffffff; /* White text color */
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
 }
+
+/*Eric's work starts here*/
+/*Section 1 and section 3 where combine as seen below since the elements align to the right (the image does)
+  Section 3 elements align to the left so thats why its different*/
+.info-section3,
+.info-section{
+    background-color: rgb(22, 125, 125);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+
+.thirdInformationSection,
+.informationSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns flex items to the start of the container on the cross axis */
+  }
+
+  .thirdInformationSection p,
+.informationSection p {
+  text-align: left;
+ 
+}
+.informationSection h2,
+.informationSection h2{
+    text-align: left;
+    font-size: 25;
+}
+
+.thirdImage,
+.firstImage{
+    width: 300px;
+    border-radius: 200px;
+    margin-left: 80px;
+    height: auto;
+}
+
+.thirdImageThird,
+.section1Image{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    
+}
+/*end of section 1 and 3*/
+
+.info-section2{
+    background-color: rgb(22, 125, 125);
+    display: flex;
+    flex-direction: row-reverse; /* This will reverse the order of the flex items */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.SecondinformationSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end; /* Aligns flex items to the end of the container on the cross axis */
+    padding-right: 0; /* Remove padding to ensure h2 touches the right side */
+}
+
+.SecondinformationSection p{
+    flex:1;
+    text-align: right;
+}
+
+.SecondinformationSection h2 {
+    text-align: right; /* Aligns the header text to the right */
+}
+
+.sectionTwoImage{
+  flex:1;
+  display: flex;
+  justify-content: flex-start;
+  padding-right: 20px;
+}
+
+.secondImage{
+    width: 300px;
+    border-radius: 200px;
+    height: auto;
+}
