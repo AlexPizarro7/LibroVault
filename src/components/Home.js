@@ -32,13 +32,18 @@ function Home() {
   };
 
   //Carl start here refrence the front the end code from erics branch *****************
-  const handleLogin = () => {
+  const handleLogin = (user) => {
 
+    // User data to send to API
+    const userData = {
+      username,
+      password,
+    };
 
-    if (username === 'u' && password === 'p') {
+    if (username === user.username && password === user.password) {
       navigate('/main-application');
     } else {
-      alert('Invalid username and password');
+      alert('Invalid username or password');
     }
   };
 
