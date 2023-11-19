@@ -19,17 +19,12 @@ function CreateAccount() {
 
 // user makes new account
   const handleCreateAccount = (user) => {
-    
-    
-    //if (!user.username || !user.password) {
-    //  alert('Please enter a username and password.')
-    //  return;
-    //}
 
     const userData = {
       username,
       password,
     };
+
 
     if (password === rePassword) {
       fetch('http://localhost:8080/api/users/createUser', {
