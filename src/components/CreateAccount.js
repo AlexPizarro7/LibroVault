@@ -20,10 +20,11 @@ function CreateAccount() {
 // user makes new account
   const handleCreateAccount = (user) => {
     
-    if (!user.username || !user.password) {
-      alert('Please enter a username and password.')
-      return;
-    }
+    
+    //if (!user.username || !user.password) {
+    //  alert('Please enter a username and password.')
+    //  return;
+    //}
 
     const userData = {
       username,
