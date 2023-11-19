@@ -26,7 +26,16 @@ function CreateAccount() {
     };
 
 
-    if (password === rePassword) {
+    if (password !== rePassword) {
+      alert('The password fields do not match. Please try again.');
+    } 
+    else if (username == '' || password == '') {
+      alert('The password or username fields are empty. Please try again')
+    }
+    else if (/\s/.test(username) || /\s/.test(password)) {
+      alert('Empty spaces are not allowed in your username or password. Please try again.')
+    }
+    else {
       fetch('http://localhost:8080/api/users/createUser', {
         method: 'POST',
         headers: {
@@ -57,8 +66,6 @@ function CreateAccount() {
       //   setPassword('p');
       //   handleLogin();
       // }, 3000);
-    } else {
-      alert('The password fields do not match. Please try again.');
     }
   };
 
