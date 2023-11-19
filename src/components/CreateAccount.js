@@ -20,10 +20,10 @@ function CreateAccount() {
 // user makes new account
   const handleCreateAccount = (user) => {
     
-    //if (!user.username || !user.password) {
-      //alert('Please enter a username and password.')
-      //return;
-    //}
+    if (!user.username || !user.password) {
+      alert('Please enter a username and password.')
+      return;
+    }
 
     const userData = {
       username,
@@ -41,6 +41,7 @@ function CreateAccount() {
         .then((response) => response.json())
         .then((user) => {
           if (user.id) {
+            //update this for better response to useer
             console.log('New user created with ID:', user.id);
             setUserId(user.id);
           } else {

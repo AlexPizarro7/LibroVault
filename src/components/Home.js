@@ -33,18 +33,23 @@ function Home() {
 
   //Carl start here refrence the front the end code from erics branch *****************
   const handleLogin = (user) => {
+    // make GET request to backend API to validate login for user
+    fetch(`http://localhost:8080/api/users/validate/${username}/${password}`, {
+      method: 'GET' ,
+    })
+      .then((response) => {
+        if (response.ok){
+          navigate('/main-application');
+        } else {
+          alert('Invalid username or password');
+        }
+      })
 
-    // User data to send to API
-    const userData = {
-      username,
-      password,
-    };
-
-    if (username === user.username && password === user.password) {
-      navigate('/main-application');
-    } else {
-      alert('Invalid username or password');
-    }
+    //if (username === user.username && password === user.password) {
+    //  navigate('/main-application');
+    //} else {
+    //  alert('Invalid username or password');
+    //}
   };
 
  //when styling this div use "home-container"
