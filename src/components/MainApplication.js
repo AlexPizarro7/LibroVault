@@ -1,4 +1,4 @@
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react'; // added useEffect Import
 import '../App.css';
 
 
@@ -10,10 +10,35 @@ const LibraryContext = createContext();
 
 //libraryContext.Provider wraps the child components, so they can access the defined values of the values
 
+/**
+ * MainApplication is the root component of the LibroVault application.
+ * It manages the state for the list of libraries and the currently selected library.
+ * 
+ * The component fetches the list of libraries from a specified API endpoint and 
+ * provides this data to its child components via the LibraryContext.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <MainApplication />
+ * )
+ */
 function MainApplication() {
     const [libraries, setLibraries] = useState([]);
     const [selectedLibrary, setSelectedLibrary] = useState(null);
 
+    /**
+     * Fetches the list of libraries from the API and updates the state.
+     * This effect runs once on component mount.
+     */
+    //     useEffect(() => {
+    //     fetch('http://localhost:8080/api/libraries')
+    //         .then(response => response.json())
+    //         .then(data => setLibraries(data))
+    //         .catch(error => console.error('Error:', error));
+    // }, []);
+
+    //jsx
     return (
         <LibraryContext.Provider value={{ libraries, setLibraries, selectedLibrary, setSelectedLibrary }}>
             <div className="App">
@@ -27,16 +52,149 @@ function MainApplication() {
     );
 }
 
+/**
+ * Library component for managing library data.
+ * Utilizes LibraryContext for state management.
+ * 
+ * @component
+ */
+function Library() {
+    const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
+
+    /**
+     * Adds a new library.
+     * 
+     * @async
+     * @function addLibrary
+     * @param {string} name - Name of the library to add.
+     * @description Sends a POST request to add a new library to the server and updates the local state.
+     */
+    const addLibrary = async (name) => {
+
+        //temporary userId value. Be sure to add it to the above parameters
+        const userId = '6537cd2a3b3f4201bcb08c9a'; // Replace 'fixedUserId' with the actual user ID when ready
+
+
+        // Construct the libraryData object with all required fields so it matches the DTO
+        const libraryData = {
+            name: name,
+            user: userId,
+        };
+    
+        try {
+            const response = await fetch('http://localhost:8080/api/libraries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(libraryData),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const newLibrary = await response.json();
+            setLibraries([...libraries, newLibrary]);
+        } catch (error) {
+            console.error('Error adding library:', error);
+        }
+    };
+    
+    /**
+     * Deletes a library by its name.
+     * 
+     * @async
+     * @function deleteLibraryByName
+     * @param {string} libraryName - Name of the library to delete.
+     * @description Sends a DELETE request to remove a library from the server and updates the local state.
+     */
+    const deleteLibraryByName = async (libraryName) => {
+        try {
+            // Send DELETE request to the server
+            const response = await fetch(`http://localhost:8080/api/libraries/name/${encodeURIComponent(libraryName)}`, {
+                method: 'DELETE',
+            });
+    
+            // Check if the deletion was successful
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            // Update the local state to remove the deleted library
+            // Assuming 'libraries' is the state variable holding the array of libraries
+            const updatedLibraries = libraries.filter(lib => lib.name !== libraryName);
+            setLibraries(updatedLibraries);
+    
+            //update the UI to reflect the deletion
+    
+        } catch (error) {
+            console.error('Error deleting library:', error);
+        }
+    };
+    
+
+    // const deleteLibrary = async (libraryId) => {
+    //     try {
+    //         await fetch(`http://localhost:8080/api/libraries/${libraryId}`, {
+    //             method: 'DELETE',
+    //         });
+
+    //         const updatedLibraries = libraries.filter(lib => lib.id !== libraryId);
+    //         setLibraries(updatedLibraries);
+    //         setSelectedLibrary(null);
+    //     } catch (error) {
+    //         console.error('Error deleting library:', error);
+    //     }
+    // };
+
+    /**
+     * Changes the name of an existing library.
+     * 
+     * @async
+     * @function changeLibraryName
+     * @param {string} libraryId - ID of the library to update.
+     * @param {string} newName - New name for the library.
+     * @description Sends a PUT request to update a library's name on the server and updates the local state.
+     */
+    const changeLibraryName = async (libraryId, newName) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/libraries/${libraryId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ newName }),
+            });
+
+            const updatedLibrary = await response.json();
+            const updatedLibraries = libraries.map(lib => lib.id === libraryId ? updatedLibrary : lib);
+            setLibraries(updatedLibraries);
+        } catch (error) {
+            console.error('Error updating library:', error);
+        }
+    };
+}
+
+
+/**
+ * LibraryList component - Renders a sidebar with a list of libraries.
+ * Allows users to add new libraries using the LibraryContext.
+ * 
+ * @component
+ */
 //This is the LibraryList component, this is the sidebar that has the list of libraries.
 //This component uses 'useContext' to access 'LibraryContext' and be able to use its functions 
 function LibraryList() {
     const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
 
+    //needs to be replaces with the method in Library
     const addLibrary = (name) => {
         const newLibrary = { name, books: [] };
         setLibraries([...libraries, newLibrary]);
     };
 
+        //jsx
     return (
         <div className="sidebar">
             {libraries.map((library, index) => (
@@ -53,6 +211,7 @@ function LibraryList() {
         </div>
     );
 }
+
 
 //This is the Books Component 
 //This is the main area content that displays the information and details of each book in a library
@@ -79,21 +238,21 @@ function Books() {
 
 
 
-    const changeLibraryName = (newName) => {
-        const updatedLibraries = libraries.map(lib => {
-            if (lib === selectedLibrary) {
-                lib.name = newName;
-            }
-            return lib;
-        });
-        setLibraries(updatedLibraries);
-    };
+    // const changeLibraryName = (newName) => {
+    //     const updatedLibraries = libraries.map(lib => {
+    //         if (lib === selectedLibrary) {
+    //             lib.name = newName;
+    //         }
+    //         return lib;
+    //     });
+    //     setLibraries(updatedLibraries);
+    // };
 
-    const deleteLibrary = () => {
-        const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
-        setLibraries(updatedLibraries);
-        setSelectedLibrary(null);
-    };
+    // const deleteLibrary = () => {
+    //     const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
+    //     setLibraries(updatedLibraries);
+    //     setSelectedLibrary(null);
+    // };
 
     const addBook = (book) => {
         if (!book.title || !book.author || !book.genre) {
@@ -145,7 +304,7 @@ function Books() {
             }
             return lib;
         });
-        setLibraries(updatedLibraries);
+        setLibraries(updatedLibraries);//what does this mean
         resetFields();
 
     };
@@ -286,13 +445,13 @@ function Books() {
     return (
         <div className="books">
             <h2>{selectedLibrary.name}</h2>
-            <button onClick={() => {
+            {/* <button onClick={() => {
                 const newName = prompt("Edit library name");
                 if (newName) changeLibraryName(newName);
             }}>
                 Edit Library Name
             </button>
-            <button onClick={deleteLibrary}>Delete Library</button>
+            <button onClick={deleteLibrary}>Delete Library</button> */}
             <input type="text" placeholder="Search for a book..." onChange={e => setSearchTerm(e.target.value)} />
 
             <select value={sortMethod} onChange={(e) => setSortMethod(e.target.value)}>
