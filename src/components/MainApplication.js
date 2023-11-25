@@ -1,4 +1,4 @@
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect} from 'react';
 import '../App.css';
 
 
@@ -29,12 +29,125 @@ function MainApplication() {
 
 //This is the LibraryList component, this is the sidebar that has the list of libraries.
 //This component uses 'useContext' to access 'LibraryContext' and be able to use its functions 
+/**
+ * LibraryList Component
+ * 
+ * @component
+ * @description 
+ * Renders a sidebar with a list of libraries associated with a specific user and allows users to add new libraries.
+ * It utilizes LibraryContext for accessing and manipulating the library data.
+ * 
+ * @functionality
+ * - Fetches and displays a list of libraries from the database associated with the logged-in user upon component mount.
+ * - Provides functionality to add a new library to the database and updates the displayed list accordingly.
+ * 
+ * @useEffect
+ * - Fetches the user's libraries from the database when the component mounts or when the user ID changes.
+ * - Utilizes the `fetchLibraries` function to make a GET request to the backend.
+ * - Updates the `libraries` state with the fetched data.
+ * 
+ * @returns {JSX.Element} The rendered sidebar component with library list and add library functionality.
+ */
 function LibraryList() {
     const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
+    const userId = '6537cd2a3b3f4201bcb08c9a'; // Replace with dynamic user ID retrieval logic
 
-    const addLibrary = (name) => {
-        const newLibrary = { name, books: [] };
-        setLibraries([...libraries, newLibrary]);
+    // useEffect(() => {
+    //     const fetchLibraries = async () => {
+    //         try {
+    //             const response = await fetch(`http://localhost:8080/api/libraries/user/${userId}`);
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! status: ${response.status}`);
+    //             }
+    //             const userLibraries = await response.json();
+    //             setLibraries(userLibraries);
+    //         } catch (error) {
+    //             console.error('Error fetching libraries:', error);
+    //         }
+    //     };
+
+    //     fetchLibraries();
+    // }, [userId, setLibraries]); // Dependency array ensures this runs when userId or setLibraries changes
+
+    useEffect(() => {
+        const fetchLibraries = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/libraries/user/${userId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const userLibraries = await response.json();
+                setLibraries(userLibraries);
+            } catch (error) {
+                console.error('Error fetching libraries:', error);
+            }
+        };
+
+        fetchLibraries();
+    }, [userId, setLibraries]); // Dependency array ensures this runs when userId or setLibraries changes
+
+
+/**
+ * Adds a new library to the database.
+ * 
+ * @async
+ * @function addLibrary
+ * @param {string} name - The name of the library to be added.
+ * @description 
+ * - Validates the library name to ensure it is provided.
+ * - Constructs the library data with the name and associated user ID.
+ * - Sends a POST request to the server to add the new library.
+ * - On successful addition, updates the local state with the newly added library.
+ * - Handles any errors during the fetch operation and logs them.
+ * @note 
+ * - The userId is currently hardcoded for demonstration purposes. 
+ *   In a production environment, it should be dynamically obtained, 
+ *   typically from the user's session or authentication context.
+ * - The function assumes that the backend API is set up to receive the POST request 
+ *   at 'http://localhost:8080/api/libraries' and handle it appropriately.
+ * - The function also assumes that the backend will return the newly created library object 
+ *   in the response, which is then used to update the local state.
+ * - Error handling is implemented for the fetch operation, but additional error handling 
+ *   may be required based on specific backend configurations and requirements.
+ */
+    const addLibrary = async (name) => {
+        const userId = '6537cd2a3b3f4201bcb08c9a'; // Replace with the actual user ID when ready
+
+        // Check if the name is provided
+        if (!name) {
+            alert('Please enter a library name.');
+            return;
+        }
+
+        // Check if the userId is provided
+        // if (!userId) {
+        //     alert('User ID is missing.');
+        //     return;
+        // }
+
+        const libraryData = {
+            name: name,
+            user: userId,
+        };
+    
+        try {
+            const response = await fetch('http://localhost:8080/api/libraries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(libraryData),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const newLibrary = await response.json();
+            setLibraries([...libraries, newLibrary]);
+        } catch (error) {
+            console.error('Error adding library:', error);
+        }
     };
 
     return (
@@ -53,6 +166,8 @@ function LibraryList() {
         </div>
     );
 }
+
+
 
 //This is the Books Component 
 //This is the main area content that displays the information and details of each book in a library
@@ -79,21 +194,103 @@ function Books() {
 
 
 
-    const changeLibraryName = (newName) => {
-        const updatedLibraries = libraries.map(lib => {
-            if (lib === selectedLibrary) {
-                lib.name = newName;
-            }
-            return lib;
-        });
-        setLibraries(updatedLibraries);
-    };
+    // const changeLibraryName = (newName) => {
+    //     const updatedLibraries = libraries.map(lib => {
+    //         if (lib === selectedLibrary) {
+    //             lib.name = newName;
+    //         }
+    //         return lib;
+    //     });
+    //     setLibraries(updatedLibraries);
+    // };
 
-    const deleteLibrary = () => {
-        const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
-        setLibraries(updatedLibraries);
-        setSelectedLibrary(null);
+    /**
+     * Changes the name of an existing library.
+     * 
+     * @function changeLibraryName
+     * @param {string} newName - The new name to be assigned to the library.
+     * @description 
+     * Sends a PUT request to the server to update the name of a specified library.
+     * Updates the local state with the new library data.
+     * 
+     * @note 
+     * - Assumes the existence of a `selectedLibrary` context or state variable with an `id` property.
+     * - The `libraryId` should match the format expected by the backend.
+     * - The function relies on the `libraries` state and `setLibraries` method from the context or state.
+     * - Uses `encodeURIComponent` to encode the `newName` to ensure it is URL-safe.
+     * 
+     * @errorHandling 
+     * - Logs an error message if the update request fails or if the server response is not as expected.
+     */
+    const changeLibraryName = (newName) => {
+        const libraryId = selectedLibrary.id; // Ensure this matches the format expected by your backend
+    
+        fetch(`http://localhost:8080/api/libraries/update/${libraryId}?newName=${encodeURIComponent(newName)}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(updatedLibrary => {
+            // Update the local state with the new library data
+            const updatedLibraries = libraries.map(lib => {
+                if (lib.id === libraryId) {
+                    return updatedLibrary; // Replace with the updated library data
+                }
+                return lib;
+            });
+            setLibraries(updatedLibraries);
+        })
+        .catch(error => {
+            console.error('Error updating library name:', error);
+        });
     };
+    
+    // const deleteLibrary = () => {
+    //     const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
+    //     setLibraries(updatedLibraries);
+    //     setSelectedLibrary(null);
+    // };
+
+    /**
+     * Deletes a library.
+     * 
+     * @function deleteLibrary
+     * @description 
+     * Sends a DELETE request to the server to remove a specified library.
+     * Updates the local state to reflect the deletion.
+     * 
+     * @note 
+     * - Assumes the existence of a `selectedLibrary` context or state variable with an `id` property.
+     * - The `libraryId` should match the format expected by the backend.
+     * - The function relies on the `libraries` state and `setLibraries` method from the context or state.
+     * - It also uses `setSelectedLibrary` to reset the selected library state.
+     * 
+     * @errorHandling 
+     * - Logs an error message if the deletion request fails or if the server response is not as expected.
+     */
+    const deleteLibrary = () => {
+        const libraryId = selectedLibrary.id; // Ensure this matches the format expected by your backend
+    
+        fetch(`http://localhost:8080/api/libraries/${libraryId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.status === 204) {
+                // Update the local state to remove the deleted library
+                const updatedLibraries = libraries.filter(lib => lib.id !== libraryId);
+                setLibraries(updatedLibraries);
+                setSelectedLibrary(null);
+            } else {
+                console.error('Failed to delete library');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting library:', error);
+        });
+    };
+    
 
     const addBook = (book) => {
         if (!book.title || !book.author || !book.genre) {
