@@ -52,23 +52,6 @@ function LibraryList() {
     const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
     const userId = '6537cd2a3b3f4201bcb08c9a'; // Replace with dynamic user ID retrieval logic
 
-    // useEffect(() => {
-    //     const fetchLibraries = async () => {
-    //         try {
-    //             const response = await fetch(`http://localhost:8080/api/libraries/user/${userId}`);
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! status: ${response.status}`);
-    //             }
-    //             const userLibraries = await response.json();
-    //             setLibraries(userLibraries);
-    //         } catch (error) {
-    //             console.error('Error fetching libraries:', error);
-    //         }
-    //     };
-
-    //     fetchLibraries();
-    // }, [userId, setLibraries]); // Dependency array ensures this runs when userId or setLibraries changes
-
     useEffect(() => {
         const fetchLibraries = async () => {
             try {
@@ -192,18 +175,6 @@ function Books() {
         ('default');
     const [bookId, setBookId] = useState('');
 
-
-
-    // const changeLibraryName = (newName) => {
-    //     const updatedLibraries = libraries.map(lib => {
-    //         if (lib === selectedLibrary) {
-    //             lib.name = newName;
-    //         }
-    //         return lib;
-    //     });
-    //     setLibraries(updatedLibraries);
-    // };
-
     /**
      * Changes the name of an existing library.
      * 
@@ -247,11 +218,6 @@ function Books() {
         });
     };
     
-    // const deleteLibrary = () => {
-    //     const updatedLibraries = libraries.filter(lib => lib !== selectedLibrary);
-    //     setLibraries(updatedLibraries);
-    //     setSelectedLibrary(null);
-    // };
 
     /**
      * Deletes a library.
@@ -292,12 +258,30 @@ function Books() {
     };
     
 
-    const addBook = (book) => {
-        if (!book.title || !book.author || !book.genre) {
-            alert('Please complete the Title, Author, and Genre fields to add the book.');
-            return;
+    /**
+    * Adds a new book to the database and then to a selected library.
+    * This function first validates the input book data to ensure that the title, author, and genre fields are provided.
+    * If any of these fields are missing, it alerts the user and exits the function. If the validation passes, it
+    * constructs a book object and sends a POST request to the backend API to add the book to the database. Upon
+    * successful addition, it then sends another POST request to add the book to a specified library.
+    * 
+    * @param {Object} book - The book object containing details of the book to be added.
+    * @param {string} book.title - The title of the book.
+    * @param {string} book.author - The author of the book.
+    * @param {string} [book.translator] - The translator of the book (optional).
+    * @param {Date} [book.publicationDate] - The publication date of the book (optional).
+    * @param {string} [book.edition] - The edition of the book (optional).
+    * @param {string} [book.volumeNumber] - The volume number of the book (optional).
+    * @param {string} book.genre - The genre of the book.
+    * @param {string} [book.subgenre] - The subgenre of the book (optional).
+    * @param {string} [book.isbn] - The ISBN of the book (optional).
+    */
+   const addBook = (book) => {
+       if (!book.title || !book.author || !book.genre) {
+           alert('Please complete the Title, Author, and Genre fields to add the book.');
+           return;
         }
-
+        
         //Book Data to send to API 
         const bookData = {
             title,
@@ -311,79 +295,102 @@ function Books() {
             isbn,
         };
 
-        fetch('http://localhost:8080/api/books', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(bookData),
-        })
-            .then((response) => response.json())
-            .then((book) => {
-                if (book.id) {
-                    console.log('New book added successfully with ID:', book.id);
-                    // You can update your UI or perform other actions upon successful book addition.
-    
-                    // Store the book ID in your component's state
-                    setBookId(book.id);
-                } else {
-                    console.error('Failed to add book, Ensure the following attributes are filled in: Author, Title, Genre');
-                    // Handle errors and provide user feedback for failed book addition.
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                // Handle network errors or other issues.
-            });
+                // First, add the book to the database
+                fetch('http://localhost:8080/api/books', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookData),
+                })
+                .then((response) => response.json())
+                .then((addedBook) => {
+                    if (addedBook.id) {
+                        console.log('New book added successfully with ID:', addedBook.id);
+                        // Now add the book to the library
+                        return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/books/${addedBook.id}`, {
+                            method: 'POST',
+                        });
+                    } else {
+                        throw new Error('Failed to add book');
+                    }
+                })
+                .then(() => {
+                    console.log('Book added to library successfully');
+                    // Update UI or state as needed
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+                
+            };
             
-        const updatedLibraries = libraries.map(lib => {
-            if (lib === selectedLibrary) {
-                lib.books.push(book);
-            }
-            return lib;
-        });
-        setLibraries(updatedLibraries);
-        resetFields();
-
-    };
-
-
-
-
+            
+            
+        
+    /**
+    * Deletes a book from the system and then removes it from a specific library.
+    * This function first checks if the bookId is valid. If not, it logs an error and exits the function.
+    * If the bookId is valid, it proceeds to send a DELETE request to the backend API to remove the book from the system.
+    * 
+    * Upon successful deletion from the system, it then sends another DELETE request to remove the book from the specified library.
+    * 
+    * After successfully removing the book from both the system and the library, it updates the local state to reflect these changes.
+    * If any of the deletion operations fail, it logs the appropriate error messages.
+    * 
+    * @param {Object} bookToDelete - The book object to be deleted.
+    * @param {string} bookToDelete.id - The unique identifier of the book to be deleted.
+    */
     const deleteBook = (bookToDelete) => {
-        if (bookId) {
-            // Make a DELETE request to the backend API to delete the book with the specified bookId
-            fetch(`http://localhost:8080/api/books/remove/${bookId}`, {
-              method: 'DELETE',
-            })
-              .then((response) => {
-                if (response.ok) {
-                  console.log('Book deleted successfully');
-                  // Update the frontend state if needed (you may not need to do anything here since you already removed it in the frontend)
-                  // setLibraries(updatedLibraries);
-                  setEdit(null);
-                } else {
-                  console.error('Failed to delete book');
-                  // Handle errors and provide user feedback for failed book deletion.
-                }
-              })
-              .catch((error) => {
-                console.error('Error:', error);
-                // Handle network errors or other issues.
-              });
-          } else {
+        if (!bookId) {
             console.error('bookId is missing or invalid');
-            // Handle the case where bookId is missing or invalid (provide user feedback or error handling).
-          }
+            return; // Exit the function if bookId is not valid
+        }
     
-        const updatedLibraries = libraries.map(lib => {
-            if (lib === selectedLibrary) {
-                lib.books = lib.books.filter(book => book !== bookToDelete);
+        // First, delete the book from the system
+        fetch(`http://localhost:8080/api/books/remove/${bookId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Book deleted successfully from the system');
+    
+                // Then, remove the book from the specific library
+                fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/books/${bookId}`, {
+                    method: 'DELETE',
+                })
+                .then(libResponse => {
+                    if (libResponse.ok) {
+                        console.log('Book removed from the library successfully');
+    
+                        // Update the local state to reflect these changes
+                        const updatedLibraries = libraries.map(lib => {
+                            if (lib.id === selectedLibrary.id) {
+                                return {
+                                    ...lib,
+                                    books: lib.books.filter(book => book.id !== bookId),
+                                };
+                            }
+                            return lib;
+                        });
+                        setLibraries(updatedLibraries);
+                        setEdit(null);
+                    } else {
+                        console.error('Failed to remove book from the library');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing book from library:', error);
+                });
+            } else {
+                console.error('Failed to delete book from the system');
             }
-            return lib;
+        })
+        .catch(error => {
+            console.error('Error deleting book from system:', error);
         });
-        setLibraries(updatedLibraries);
     };
+    
 
     const editButton = (book) => {
         setTitle(book.title);
