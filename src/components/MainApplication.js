@@ -33,6 +33,10 @@ function LibraryList() {
     const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
 
     const addLibrary = (name) => {
+        if (!name.trim()) {
+            alert('Library name cannot be empty');
+            return;
+        }
         const newLibrary = { name, books: [] };
         setLibraries([...libraries, newLibrary]);
     };
@@ -46,7 +50,7 @@ function LibraryList() {
             ))}
             <button onClick={() => {
                 const name = prompt("Enter library name");
-                if (name) addLibrary(name);
+                addLibrary(name);
             }}>
                 + Add Library
             </button>
