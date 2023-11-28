@@ -477,7 +477,9 @@ function Books() {
         setEdit(null);
     };
 
-    let searchedBooks = selectedLibrary.books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    // let searchedBooks = selectedLibrary.books.filter(book => book.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    let searchedBooks = selectedLibrary.books
+    .filter(book => book && book.title.toLowerCase().includes(searchTerm.toLowerCase()));//now it will display null Book lists
 
     if (sortMethod === 'alphabetical') {
         searchedBooks.sort((a, b) => a.title.localeCompare(b.title));
