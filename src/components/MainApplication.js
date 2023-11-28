@@ -194,8 +194,19 @@ function Books() {
      * - Logs an error message if the update request fails or if the server response is not as expected.
      */
     const changeLibraryName = (newName) => {
-        const libraryId = selectedLibrary.id; // Ensure this matches the format expected by your backend
-    
+        const libraryId = selectedLibrary.libraryId; // Ensure this matches the format expected by your backend
+        console.log("Selected Library:", selectedLibrary);
+        console.log("Library ID:", libraryId);
+
+        if (!selectedLibrary.libraryId) {
+            console.error('libraryId is missing');
+            return;
+        }
+        if(!selectedLibrary){
+            console.error('No Library selected');
+            return;
+        }
+
         fetch(`http://localhost:8080/api/libraries/update/${libraryId}?newName=${encodeURIComponent(newName)}`, {
             method: 'PUT',
             headers: {
@@ -237,7 +248,7 @@ function Books() {
      * - Logs an error message if the deletion request fails or if the server response is not as expected.
      */
     const deleteLibrary = () => {
-        const libraryId = selectedLibrary.id; // Ensure this matches the format expected by your backend
+        const libraryId = selectedLibrary.libraryId; // Ensure this matches the format expected by your backend
     
         fetch(`http://localhost:8080/api/libraries/${libraryId}`, {
             method: 'DELETE',
