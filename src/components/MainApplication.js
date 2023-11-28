@@ -268,33 +268,7 @@ function Books() {
         });
     };
     
-
-    /**
-    * Adds a new book to the database and then to a selected library.
-    * This function first validates the input book data to ensure that the title, author, and genre fields are provided.
-    * If any of these fields are missing, it alerts the user and exits the function. If the validation passes, it
-    * constructs a book object and sends a POST request to the backend API to add the book to the database. Upon
-    * successful addition, it then sends another POST request to add the book to a specified library.
-    * 
-    * @param {Object} book - The book object containing details of the book to be added.
-    * @param {string} book.title - The title of the book.
-    * @param {string} book.author - The author of the book.
-    * @param {string} [book.translator] - The translator of the book (optional).
-    * @param {Date} [book.publicationDate] - The publication date of the book (optional).
-    * @param {string} [book.edition] - The edition of the book (optional).
-    * @param {string} [book.volumeNumber] - The volume number of the book (optional).
-    * @param {string} book.genre - The genre of the book.
-    * @param {string} [book.subgenre] - The subgenre of the book (optional).
-    * @param {string} [book.isbn] - The ISBN of the book (optional).
-    */
-   const addBook = (book) => {
-       if (!book.title || !book.author || !book.genre) {
-           alert('Please complete the Title, Author, and Genre fields to add the book.');
-           return;
-        }
-        
-        console.log('empty book');
-
+    const addBook = (book) => {
         //Book Data to send to API 
         const bookData = {
             title,
@@ -307,38 +281,45 @@ function Books() {
             subgenre,
             isbn,
         };
-        console.log('create a book');
-
-
-                // First, add the book to the database
-                fetch('http://localhost:8080/api/books', {
+    
+        fetch('http://localhost:8080/api/books', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookData),
+        })
+        .then((response) => response.json())
+        .then((addedBook) => {
+            if (addedBook.id) {
+                console.log('New book added successfully with ID:', addedBook.id);
+                // Store the book ID in your component's state
+                setBookId(addedBook.id);
+    
+                // Now add the book's DBRef to the library
+                return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/addBook/${addedBook.id}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(bookData),
-                })
-                .then((response) => response.json())
-                .then((addedBook) => {
-                    if (addedBook.id) {
-                        console.log('New book added successfully with ID:', addedBook.id);
-                        // Now add the book to the library
-                        return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/books/${addedBook.id}`, {
-                            method: 'POST',
-                        });
-                    } else {
-                        throw new Error('Failed to add book');
-                    }
-                })
-                .then(() => {
-                    console.log('Book added to library successfully');
-                    // Update UI or state as needed
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
                 });
-                
-            };
+            } else {
+                console.error('Failed to add book');
+                // Handle errors and provide user feedback for failed book addition.
+            }
+        })
+        .then((libraryResponse) => {
+            if (libraryResponse.ok) {
+                console.log('Book added to library successfully');
+                // Update UI or state as needed
+            } else {
+                console.error('Failed to add book to library');
+                // Handle errors and provide user feedback for failed library addition.
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Handle network errors or other issues.
+        });
+    };
+    
             
             
             
