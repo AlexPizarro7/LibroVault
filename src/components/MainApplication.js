@@ -293,6 +293,8 @@ function Books() {
            return;
         }
         
+        console.log('empty book');
+
         //Book Data to send to API 
         const bookData = {
             title,
@@ -305,6 +307,8 @@ function Books() {
             subgenre,
             isbn,
         };
+        console.log('create a book');
+
 
                 // First, add the book to the database
                 fetch('http://localhost:8080/api/books', {
@@ -353,11 +357,13 @@ function Books() {
     * @param {string} bookToDelete.id - The unique identifier of the book to be deleted.
     */
     const deleteBook = (bookToDelete) => {
+        console.log(bookToDelete);
+        const bookId = bookToDelete.id;
+
         if (!bookId) {
             console.error('bookId is missing or invalid');
             return; // Exit the function if bookId is not valid
         }
-    
         // First, delete the book from the system
         fetch(`http://localhost:8080/api/books/remove/${bookId}`, {
             method: 'DELETE',
