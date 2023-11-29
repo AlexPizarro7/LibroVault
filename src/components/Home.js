@@ -52,6 +52,19 @@ function Home() {
     //}
   };
 
+  const retrieveUserId = (user) => {
+    fetch(`http://localhost:8080/api/getUserId/${username}`, {
+      method: 'GET' ,
+    })
+      .then((response) => {
+        if(response.ok) {
+          console.log('User ID: ', user.userId)
+        } else {
+          console.error('User does not exist');
+        }
+      })
+  }
+
  //when styling this div use "home-container"
  //onChange{(e)} username or password  state variable in response to changes in the input field.
   return (

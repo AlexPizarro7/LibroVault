@@ -37,7 +37,7 @@ function CreateAccount() {
         .then((response) => response.json())
         .then((user) => {
           if (user.id) {
-            //update this for better response to useer
+            //update this for better response to user
             console.log('New user created with ID:', user.id);
             setUserId(user.id);
           } else {
