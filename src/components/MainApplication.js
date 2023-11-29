@@ -268,6 +268,26 @@ function Books() {
         });
     };
     
+    /**
+ * Adds a book to the database and then links it to a specific library.
+ * 
+ * This function first sends a POST request to add a new book to the database.
+ * If successful, it then sends another POST request to add the book's reference
+ * to a specified library. It handles both success and error cases, logging
+ * appropriate messages and updating the component's state as needed.
+ *
+ * @param {Object} book - The book object to be added. This is not used directly
+ *                        but its properties are destructured to form the bookData.
+ * @param {string} book.title - The title of the book.
+ * @param {string} book.author - The author of the book.
+ * @param {string} [book.translator] - The translator of the book, if any.
+ * @param {Date} [book.publicationDate] - The publication date of the book.
+ * @param {string} [book.edition] - The edition of the book.
+ * @param {string} [book.volumeNumber] - The volume number of the book, if applicable.
+ * @param {string} book.genre - The genre of the book.
+ * @param {string} [book.subgenre] - The subgenre of the book, if applicable.
+ * @param {string} [book.isbn] - The ISBN of the book.
+ */
     const addBook = (book) => {
         //Book Data to send to API 
         const bookData = {
