@@ -1,7 +1,7 @@
 /* Home.css */
 
 .home-container {
-    background-color: #6d057a; /* Dark purple background */
+    background-color: #5a25a0; /* Dark purple background */
     color: #ffffff; /* White text color */
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
     /* Optional: Add some padding and center the content */
@@ -31,28 +31,51 @@ button {
 }
 
     button:hover {
-        background-color: #2c2245; /* Dark purple on hover */
+        background-color: #ac0b0b; /* Dark purple on hover */
     }
 
 
 h2 {
-    background-color: #6d057a; /* Dark purple background */
+    background-color: rgb(59, 59, 59); /* Dark purple background */
     color: #ffffff; /* White text color */
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
 }
 
+h3{
+    color: #ffffff; /* White text color */
+    font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
+    font-size: small;
+}
+
+.capsule {
+    border-radius: 50px / 25px; /* This makes the border a capsule shape */
+    padding: 20px; /* Adjust as needed */
+  }
+  
+
 body {
-    background-color: #9807ab; /* Dark purple background */
+    background-color: #401b70; /* Dark purple background */
     color: #ffffff; /* White text color */
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
 }
+
+  .capsuleBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 50px; 
+    background-color: rgb(51, 51, 51);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a box shadow for depth */
+    margin: 20px; 
+  }
 
 /*Eric's work starts here*/
 /*Section 1 and section 3 where combine as seen below since the elements align to the right (the image does)
   Section 3 elements align to the left so thats why its different*/
 .info-section3,
 .info-section{
-    background-color: rgb(22, 125, 125);
+    background-color: rgb(51, 51, 51);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -95,7 +118,7 @@ body {
 /*end of section 1 and 3*/
 
 .info-section2{
-    background-color: rgb(22, 125, 125);
+    background-color: rgb(51, 51, 51);
     display: flex;
     flex-direction: row-reverse; /* This will reverse the order of the flex items */
     justify-content: space-between;
@@ -132,3 +155,45 @@ body {
     border-radius: 200px;
     height: auto;
 }
+
+.capsuleBox::before,
+.capsuleBox::after {
+  content: '';
+  width: 20px;
+  height: 100%;
+  background-color:  rgb(51, 51, 51);
+  border-radius: 50%;
+}
+
+.capsuleBox::before {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.capsuleBox::after {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Adjust this value based on your design preferences */
+}
+
+.visible {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Add styles for the images if needed (e.g., adjusting width, height, margins, etc.) */
+.footer img {
+  width: 1000px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin: 0 5px; /* Adjust margins between images */
+}
+
