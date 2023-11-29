@@ -289,13 +289,23 @@ function Books() {
             },
             body: JSON.stringify(bookData),
         })
-        .then((response) => response.json())
+        // .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                // Handle HTTP errors
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then((addedBook) => {
             if (addedBook.id) {
                 console.log('New book added successfully with ID:', addedBook.id);
                 // Store the book ID in your component's state
                 setBookId(addedBook.id);
     
+                console.log(selectedLibrary.id);
+                console.log(addBook.id);
+                console.log(book.id);
                 // Now add the book's DBRef to the library
                 return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/addBook/${addedBook.id}`, {
                     method: 'POST',
