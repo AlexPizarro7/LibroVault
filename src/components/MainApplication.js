@@ -303,11 +303,8 @@ function Books() {
                 // Store the book ID in your component's state
                 setBookId(addedBook.id);
     
-                console.log(selectedLibrary.id);
-                console.log(addBook.id);
-                console.log(book.id);
                 // Now add the book's DBRef to the library
-                return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/addBook/${addedBook.id}`, {
+                return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.libraryId}/addBook/${addedBook.id}`, {
                     method: 'POST',
                 });
             } else {
