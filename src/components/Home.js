@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; //import navigate used for changing "pages" or to redirect 
 import CreateAccount from './CreateAccount'; // Import the CreateAccount component
 import './Home.css'; //Import home.css for finished styling
@@ -23,6 +23,7 @@ function Home() {
   const [password, setPassword] = useState('');
   const [isCreateAccountVisible, setCreateAccountVisible] = useState(false);
   const navigate = useNavigate();  //used to navigate to the main application 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   //Just toggles the visibility of the create account form ( when clicked it shows)
   const toggleCreateAccount = () => {
@@ -38,6 +39,27 @@ function Home() {
     }
   };
 
+  //placeholder ads for the bottom of the page
+  const footerImages = [
+    '/images/googlead1.png',
+    '/images/googlead2.png',
+    '/images/googlead3.png',
+    '/images/googlead4.png',
+    '/images/googlead5.png',
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Increment the index, and reset to 0 if it exceeds the array length
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === footerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 60000); // 60 seconds interval
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, [footerImages.length]);
+
   //when styling this div use "home-container"
   //onChange{(e)} username or password  state variable in response to changes in the input field.
   //h2 and body added to differentiate in .css file.
@@ -46,7 +68,7 @@ function Home() {
       {/* Displays the Title*/}
       <h1>Welcome to Libro Vault</h1>
       {/*Input field for username*//*h2 added for css formatting*/}
-      <h2>
+      <h2 class="capsule">
         <input
           type="text"
           placeholder="Username"
@@ -67,7 +89,10 @@ function Home() {
         {/*Conditionally render the create account component based on isCreateAccountVisible*/}
         {isCreateAccountVisible && <CreateAccount />}
       </h2>
+
+
       {/*Eric - Sections added structure pretty straighforward*/}
+      <div className='capsuleBox'>
       <section className='info-section'>
         <div className="informationSection">
           <h2>Organize your Literary World</h2>
@@ -108,11 +133,22 @@ function Home() {
       </section>
       
 
-
-
-
+ </div>
+          {/* Footer section */}
+          <div className="footer">
+                {footerImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Footer Image ${index + 1}`}
+                    className={index === currentImageIndex ? 'visible' : 'hidden'}
+                  />
+                ))}
+          </div>
+   
+    
     </div>
-
+    
 
   );
 }

@@ -44,7 +44,7 @@ function LibraryList() {
                     {library.name}
                 </button>
             ))}
-            <button onClick={() => {
+            <button className="add-library" onClick={() => {
                 const name = prompt("Enter library name");
                 if (name) addLibrary(name);
             }}>
@@ -304,15 +304,15 @@ function Books() {
 
             {searchedBooks.map((book, index) => (
                 <div key={index}>
-                    <h4>{book.title}</h4>
-                    <p>{book.author}</p>
-                    <p>{book.translator}</p>
-                    <p>{book.publicationDate}</p>
-                    <p>{book.edition}</p>
-                    <p>{book.volumeNumber}</p>
-                    <p>{book.genre}</p>
-                    <p>{book.subgenre}</p>
-                    <p>{book.isbn}</p>
+                    <h4>Title: {book.title}</h4>
+                    <p>Author: {book.author}</p>
+                    <p>Translator: {book.translator}</p>
+                    <p>Pub. Date: {book.publicationDate}</p>
+                    <p>Edition: {book.edition}</p>
+                    <p>Volume: {book.volumeNumber}</p>
+                    <p>Genre: {book.genre}</p>
+                    <p>Subgenre: {book.subgenre}</p>
+                    <p>ISBN: {book.isbn}</p>
                     <button onClick={() => deleteBook(book)}>Delete book</button>
                     <button onClick={() => editButton(book)}>Edit book</button>
                 </div>

@@ -1,7 +1,7 @@
 /* MainApplication.css */
 
 body {
-    background-color: #9807ab; /* Slightly lighter purple background */
+    background-color: #5a25a0; /* Slightly lighter purple background */
     color: #ffffff; /* White text color */
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
 }
@@ -11,7 +11,7 @@ body {
 }
 
 header {
-    background-color: #1a142a; /* Darker purple for the header */
+    background-color: rgb(68, 7, 117); /* Darker purple for the header */
     padding: 10px;
     text-align: center;
 }
@@ -26,18 +26,23 @@ header {
     text-align: center;
 }
 
-    .sidebar button {
-        background-color: #1a142a; /* Darker purple for buttons */
-        color: #ffffff; /* White text color */
-        padding: 10px;
-        margin: 5px 0;
-        cursor: pointer;
-        border: none;
-    }
+.sidebar button {
+    background-color: #1a142a;
+    color: #ffffff; /* White text color */
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    border: none;
+}
 
-        .sidebar button:hover {
-            background-color: #9807ab; /* Slightly lighter purple on hover */
-        }
+.sidebar button.add-library {
+    background-color: #404040; /* Grey background color */
+    color: #db0000; /* White text color */
+}
+
+.sidebar button:hover {
+    background-color: #9807ab; /* Slightly lighter purple on hover */
+} 
 
 .books {
     flex-grow: 1;
@@ -84,5 +89,5 @@ header {
         }
 
             .books div button:hover {
-                background-color: #9807ab; /* Slightly lighter purple on hover #3b2f56*/
+                background-color: #7707ab; /* Slightly lighter purple on hover #3b2f56*/
             }
