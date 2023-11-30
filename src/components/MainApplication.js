@@ -343,6 +343,11 @@ function Books() {
             subgenre,
             isbn,
         };
+
+        if (!book.title || !book.author || !book.genre) {
+            alert('Please complete the Title, Author, and Genre fields to add the book.');
+            return;
+        }
     
         fetch('http://localhost:8080/api/books', {
             method: 'POST',
