@@ -102,9 +102,6 @@ function LibraryList() {
             return;
         }
 
-            return;
-        }
-
         // Check if the userId is provided
         // if (!userId) {
         //     alert('User ID is missing.');
@@ -179,46 +176,44 @@ function Books() {
     const [bookId, setBookId] = useState('');
 
     /**
- * Changes the name of the currently selected library.
- * 
- * This function sends a PUT request to the server to update the name of the selected library.
- * It performs several checks before sending the request, including verifying that a new name
- * is provided and that a library is currently selected. It also checks for the presence of a
- * libraryId. If the request is successful, it updates the local state with the new library data.
- *
- * @param {string} newName - The new name to be assigned to the selected library.
- */
+     * Changes the name of an existing library.
+     * 
+     * @function changeLibraryName
+     * @param {string} newName - The new name to be assigned to the library.
+     * @description 
+     * Sends a PUT request to the server to update the name of a specified library.
+     * Updates the local state with the new library data.
+     * 
+     * @note 
+     * - Assumes the existence of a `selectedLibrary` context or state variable with an `id` property.
+     * - The `libraryId` should match the format expected by the backend.
+     * - The function relies on the `libraries` state and `setLibraries` method from the context or state.
+     * - Uses `encodeURIComponent` to encode the `newName` to ensure it is URL-safe.
+     * 
+     * @errorHandling 
+     * - Logs an error message if the update request fails or if the server response is not as expected.
+     */
     const changeLibraryName = (newName) => {
-        // Check if the newName is not empty
-        if (!newName.trim()) {
-            console.error('The new name cannot be empty');
+        const libraryId = selectedLibrary.libraryId; // Ensure this matches the format expected by your backend
+        console.log("Selected Library:", selectedLibrary);
+        console.log("Library ID:", libraryId);
+
+        if (!selectedLibrary.libraryId) {
+            console.error('libraryId is missing');
             return;
         }
-    
         if(!selectedLibrary){
             console.error('No Library selected');
             return;
         }
-    
-        const libraryId = selectedLibrary.libraryId;
-    
-        if (!libraryId) {
-            console.error('libraryId is missing');
-            return;
-        }
-    
+
         fetch(`http://localhost:8080/api/libraries/update/${libraryId}?newName=${encodeURIComponent(newName)}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(updatedLibrary => {
             // Update the local state with the new library data
             const updatedLibraries = libraries.map(lib => {
@@ -233,7 +228,6 @@ function Books() {
             console.error('Error updating library name:', error);
         });
     };
-    
     
 
     /**
@@ -341,7 +335,7 @@ function Books() {
         .then((libraryResponse) => {
             if (libraryResponse.ok) {
                 console.log('Book added to library successfully');
-                    // Update UI or state as needed
+                // Update UI or state as needed
             } else {
                 console.error('Failed to add book to library');
                 // Handle errors and provide user feedback for failed library addition.
@@ -353,6 +347,7 @@ function Books() {
         });
     };
     
+            
             
             
         
