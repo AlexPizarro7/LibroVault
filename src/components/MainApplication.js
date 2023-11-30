@@ -18,6 +18,9 @@ function MainApplication() {
     const [selectedLibrary, setSelectedLibrary] = useState(null);
     const location = useLocation();
     const [userId, setUserId] = useState(null); // State for userId
+    const [librariesUpdated, setLibrariesUpdated] = useState(false);
+    
+
   
     useEffect(() => {
         console.log('location:', location);
@@ -30,7 +33,7 @@ function MainApplication() {
   
     return (
       <div> {/* This is the opening <div> tag */}
-        <LibraryContext.Provider value={{ libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId, setUserId }}>
+        <LibraryContext.Provider value={{ libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId, setUserId, librariesUpdated, setLibrariesUpdated }}>
           <header>LibroVault</header>
           <div className="content">
             <LibraryList />
@@ -65,7 +68,8 @@ function MainApplication() {
  * @returns {JSX.Element} The rendered sidebar component with library list and add library functionality.
  */
 function LibraryList() {
-    const { libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId } = useContext(LibraryContext);
+    const { libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId, librariesUpdated, setLibrariesUpdated  } = useContext(LibraryContext);
+
   
 
 
@@ -88,7 +92,7 @@ function LibraryList() {
         };
 
         fetchLibraries();
-    }, [userId, setLibraries]); // Dependency array ensures this runs when userId or setLibraries changes
+    }, [userId, setLibraries, librariesUpdated]); // Dependency array ensures this runs when userId or setLibraries changes
 
 
 /**
@@ -168,11 +172,16 @@ function LibraryList() {
 
     return (
         <div className="sidebar">
-            {libraries.map((library, index) => (
+         {libraries.map((library) => (
+            <button key={`${library.id}-${library.name}`} onClick={() => setSelectedLibrary(library)}>
+                {library.name}
+            </button>
+        ))}
+            {/* {libraries.map((library, index) => (
                 <button key={index} onClick={() => setSelectedLibrary(library)}>
                     {library.name}
                 </button>
-            ))}
+            ))} */}
             <button onClick={() => {
                 const name = prompt("Enter library name");
                 if (name) addLibrary(name);
@@ -206,6 +215,8 @@ function Books() {
     const [sortMethod, setSortMethod] = useState
         ('default');
     const [bookId, setBookId] = useState('');
+    const { setLibrariesUpdated } = useContext(LibraryContext);
+
 
     /**
      * Changes the name of an existing library.
@@ -257,15 +268,37 @@ function Books() {
         })
         .then(response => response.json())
         .then(updatedLibrary => {
-            // Update the local state with the new library data
             const updatedLibraries = libraries.map(lib => {
                 if (lib.id === libraryId) {
-                    return updatedLibrary; // Replace with the updated library data
+                    return { ...lib, name: updatedLibrary.name }; // Update the name
                 }
                 return lib;
             });
-            setLibraries(updatedLibraries);
+            setLibraries(updatedLibraries); // This should trigger a re-render
+            setLibrariesUpdated(prev => !prev); // Toggle the state to trigger re-fetch
+                // Update selectedLibrary if it's the one that was changed
+            if (selectedLibrary && selectedLibrary.id === libraryId) {
+                 setSelectedLibrary({ ...selectedLibrary, name: updatedLibrary.name });
+            }
         })
+        
+        
+
+    //     .then(updatedLibrary => {
+    //         // Update the local state with the new library data
+    //          const updatedLibraries = libraries.map(lib => {
+    //         if (lib.id === libraryId) {
+    //             return { ...updatedLibrary }; // Create a new object for the updated library
+    //          }
+    //      return lib;
+    // });
+    // setLibraries(updatedLibraries); // This should trigger a re-render
+
+    // // Update the selectedLibrary if it's the one that was changed
+    // if (selectedLibrary.id === libraryId) {
+    //     setSelectedLibrary({ ...updatedLibrary });
+    // }
+    //     })
         .catch(error => {
             console.error('Error updating library name:', error);
         });
@@ -301,6 +334,7 @@ function Books() {
                 const updatedLibraries = libraries.filter(lib => lib.id !== libraryId);
                 setLibraries(updatedLibraries);
                 setSelectedLibrary(null);
+                setLibrariesUpdated(prev => !prev); // Toggle the state to trigger re-fetch
             } else {
                 console.error('Failed to delete library');
             }
