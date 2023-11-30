@@ -32,25 +32,42 @@ function Home() {
   };
 
   //Carl start here refrence the front the end code from erics branch *****************
-  const handleLogin = (user) => {
-    // make GET request to backend API to validate login for user
+  const handleLogin = () => {
     fetch(`http://localhost:8080/api/users/validate/${username}/${password}`, {
-      method: 'GET' ,
+      method: 'GET',
     })
-      .then((response) => {
-        if (response.ok){
-          navigate('/main-application');
-        } else {
-          alert('Invalid username or password');
-        }
-      })
+    .then((response) => {
+      if (response.ok) {
+        // Fetch the user's userId using the new endpoint
+        return fetch(`http://localhost:8080/api/users/getUserId/${username}`, {
+          method: 'GET',
+        });
+      } else {
+        throw new Error('Invalid username or password');
+      }
+    })
+    .then((userIdResponse) => userIdResponse.text()) // Assuming the response is just plain text (userId)
+    .then((userId) => {
+      if (userId) {
+        setUserId(userId); // Set the userId
+        navigate('/main-application', { state: { userId: userId } }); // Navigate with userId
+      } else {
+        alert('User ID not found');
+      }
+    })
+    .catch((error) => {
+      console.error('Login error:', error);
+      alert(error.message);
+    });
+  };
+
 
     //if (username === user.username && password === user.password) {
     //  navigate('/main-application');
     //} else {
     //  alert('Invalid username or password');
     //}
-  };
+  
 
  //when styling this div use "home-container"
  //onChange{(e)} username or password  state variable in response to changes in the input field.
@@ -82,6 +99,6 @@ function Home() {
       {isCreateAccountVisible && <CreateAccount />}
     </div>
   );
-}
-
+  
+  }
 export default Home;

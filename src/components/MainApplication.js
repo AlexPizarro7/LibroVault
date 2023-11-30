@@ -1,9 +1,12 @@
 import React, { useState, useContext, createContext, useEffect} from 'react';
 import '../App.css';
+import LibraryContext from './LibraryContext';
+import { useLocation } from 'react-router-dom';
+
 
 
 //This context allows child components to access and modify the app's state
-const LibraryContext = createContext();
+
 
 //This is the App component, the main component
 //uses UseStat eo create 2 state variables: libraries (list of libraries) and selectedLibrary(the currently selected library)
@@ -13,19 +16,32 @@ const LibraryContext = createContext();
 function MainApplication() {
     const [libraries, setLibraries] = useState([]);
     const [selectedLibrary, setSelectedLibrary] = useState(null);
-
+    const location = useLocation();
+    const [userId, setUserId] = useState(null); // State for userId
+  
+    useEffect(() => {
+        console.log('location:', location);
+        if (location.state?.userId) {
+          console.log('userId:', location.state.userId); // Log userId
+          setUserId(location.state.userId);
+        }
+      }, [location.state?.userId]);
+      
+  
     return (
-        <LibraryContext.Provider value={{ libraries, setLibraries, selectedLibrary, setSelectedLibrary }}>
-            <div className="App">
-                <header>LibroVault</header>
-                <div className="content">
-                    <LibraryList />
-                    {selectedLibrary && <Books />}
-                </div>
-            </div>
+      <div> {/* This is the opening <div> tag */}
+        <LibraryContext.Provider value={{ libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId, setUserId }}>
+          <header>LibroVault</header>
+          <div className="content">
+            <LibraryList />
+            {selectedLibrary && <Books />}
+          </div>
         </LibraryContext.Provider>
+      </div> 
     );
-}
+  }
+  
+  
 
 //This is the LibraryList component, this is the sidebar that has the list of libraries.
 //This component uses 'useContext' to access 'LibraryContext' and be able to use its functions 
@@ -49,11 +65,16 @@ function MainApplication() {
  * @returns {JSX.Element} The rendered sidebar component with library list and add library functionality.
  */
 function LibraryList() {
-    const { libraries, setLibraries, setSelectedLibrary } = useContext(LibraryContext);
-    const userId = '6537cd2a3b3f4201bcb08c9a'; // Replace with dynamic user ID retrieval logic
+    const { libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId } = useContext(LibraryContext);
+  
+
 
     useEffect(() => {
         const fetchLibraries = async () => {
+            if (!userId) {
+                console.log("User ID not found");
+                return; // Or handle the absence of userId as appropriate
+            }
             try {
                 const response = await fetch(`http://localhost:8080/api/libraries/user/${userId}`);
                 if (!response.ok) {
@@ -94,7 +115,7 @@ function LibraryList() {
  *   may be required based on specific backend configurations and requirements.
  */
     const addLibrary = async (name) => {
-        const userId = '6537cd2a3b3f4201bcb08c9a'; // Replace with the actual user ID when ready
+        
 
         // Check if the name is provided
         if (!name) {
@@ -103,10 +124,10 @@ function LibraryList() {
         }
 
         // Check if the userId is provided
-        // if (!userId) {
-        //     alert('User ID is missing.');
-        //     return;
-        // }
+        if (!userId) {
+            alert('User ID is missing.');
+            return;
+        }
 
         const libraryData = {
             name: name,
