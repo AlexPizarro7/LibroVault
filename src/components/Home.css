@@ -36,7 +36,7 @@ button {
 
 
 h2 {
-    background-color: rgb(59, 59, 59); /* Dark purple background */
+   
     color: #ffffff; /* White text color */
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
 }
@@ -47,11 +47,7 @@ h3{
     font-size: small;
 }
 
-.capsule {
-    border-radius: 50px / 25px; /* This makes the border a capsule shape */
-    padding: 20px; /* Adjust as needed */
-  }
-  
+
 
 body {
     background-color: #401b70; /* Dark purple background */
@@ -59,7 +55,7 @@ body {
     font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
 }
 
-  .capsuleBox {
+  /*.capsuleBox {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,7 +63,7 @@ body {
     border-radius: 50px; 
     background-color: rgb(51, 51, 51);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a box shadow for depth */
-    margin: 20px; 
+   /* margin: 20px; 
   }
 
 /*Eric's work starts here*/
@@ -75,11 +71,21 @@ body {
   Section 3 elements align to the left so thats why its different*/
 .info-section3,
 .info-section{
-    background-color: rgb(51, 51, 51);
-    display: flex;
+
+    padding: top 50px; ;
+    
     justify-content: space-between;
-    align-items: center;
+  
+    margin-bottom: 100px;
+    display: flex;
+    border-radius: 25px;
    
+}
+
+.info-section{
+
+  align-items: top;
+  
 }
 
 .thirdInformationSection,
@@ -87,25 +93,40 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start; /* Aligns flex items to the start of the container on the cross axis */
+
   }
+
+
 
   .thirdInformationSection p,
 .informationSection p {
   text-align: left;
+  padding:10px;
+  font-size: 25px;
+  line-height: 2;
  
 }
 .informationSection h2,
-.informationSection h2{
+.thirdInformationSection h2{
+  padding-left: 10px;
     text-align: left;
-    font-size: 25;
+    font-size: 30px;
+}
+
+.capsuleBox1{
+  background-color: red;
 }
 
 .thirdImage,
 .firstImage{
-    width: 300px;
+    width: 600;
+    height: 460;
     border-radius: 200px;
     margin-left: 80px;
     height: auto;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-right: 50px;
 }
 
 .thirdImageThird,
@@ -118,42 +139,69 @@ body {
 /*end of section 1 and 3*/
 
 .info-section2{
-    background-color: rgb(51, 51, 51);
+   
     display: flex;
     flex-direction: row-reverse; /* This will reverse the order of the flex items */
     justify-content: space-between;
-    align-items: center;
+    align-items: top;
+  
+    border-radius: 25px;
+    margin-bottom: 50px;
+    
+}
+.info-section2{
+
+  align-items: top;
+  
 }
 
 .SecondinformationSection {
-    flex: 1;
+    
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: flex-end; /* Aligns flex items to the end of the container on the cross axis */
+
     padding-right: 0; /* Remove padding to ensure h2 touches the right side */
 }
 
 .SecondinformationSection p{
-    flex:1;
-    text-align: right;
+   
+    text-align: left;
+    font-size: 25px;
+    line-height: 2;
+    padding-left: 80px;
+
+
 }
 
 .SecondinformationSection h2 {
-    text-align: right; /* Aligns the header text to the right */
+    text-align: right;
+    padding-right: 60px;
+    font-size: 28px;
 }
 
-.sectionTwoImage{
-  flex:1;
+.secondImagetwo{
   display: flex;
-  justify-content: flex-start;
-  padding-right: 20px;
+
+  align-items: center;
+ 
+
+
+
 }
 
 .secondImage{
-    width: 300px;
+   
     border-radius: 200px;
-    height: auto;
+    width: 600;
+    height: 460;
+    padding: auto;
+    
+  
+  
+  
+    
+  
 }
 
 .capsuleBox::before,
@@ -163,6 +211,7 @@ body {
   height: 100%;
   background-color:  rgb(51, 51, 51);
   border-radius: 50%;
+  
 }
 
 .capsuleBox::before {
@@ -197,3 +246,7 @@ body {
   margin: 0 5px; /* Adjust margins between images */
 }
 
+h2.capsule{
+  background-color: #5a25a0;
+  margin-bottom: 81px;
+}

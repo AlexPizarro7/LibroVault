@@ -93,19 +93,21 @@ function Home() {
 
       {/*Eric - Sections added structure pretty straighforward*/}
       <div className='capsuleBox'>
-      <section className='info-section'>
-        <div className="informationSection">
-          <h2>Organize your Literary World</h2>
-          <p className="paragraph">
-            Keep your entire book collection neatly organized! With our software, effortlessly categorize your books by title, author, genre, and more.
-            Say goodbye to cluttered shelves and hello to an easily navigable digital library.
-          </p>
-        </div>
-        <div className='section1Image'>
-          <img className='firstImage' src={bookshelfImage} alt="Bookshelf" />
-        </div>
-      </section>
-
+       
+        <section className='info-section'>
+          <div className="informationSection">
+            <h2>Organize your Literary World</h2>
+            <p className="paragraph">
+              Keep your entire book collection neatly organized! With our software, effortlessly categorize your books by title, author, genre, and more.
+              Say goodbye to cluttered shelves and hello to an easily navigable digital library.
+            </p>
+            
+          </div>
+          <div className='section1Image'>
+            <img className='firstImage' src={bookshelfImage} alt="Bookshelf" />
+          </div>
+        </section>
+       
       <section className='info-section2'>
         <div className='SecondinformationSection'>
           <h2>Personalized Libraries at your Fingertips</h2>
