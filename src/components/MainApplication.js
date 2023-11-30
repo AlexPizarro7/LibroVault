@@ -123,6 +123,18 @@ function LibraryList() {
             return;
         }
 
+        // Check if the name is provided
+        if (name.trim === '') {
+             alert('Empty Strings are not allowed.');
+            return;
+        }
+
+        if (!name.trim()) {
+            alert('Name requires characters or numbers.');
+            return;
+        }
+        
+
         // Check if the userId is provided
         if (!userId) {
             alert('User ID is missing.');
@@ -170,7 +182,6 @@ function LibraryList() {
         </div>
     );
 }
-
 
 
 //This is the Books Component 
@@ -227,6 +238,16 @@ function Books() {
             console.error('No Library selected');
             return;
         }
+        // Check if the name is provided
+        if (newName.trim === '') {
+             alert('Empty Strings are not allowed.');
+            return;
+         }
+         if (!newName.trim()) {
+            alert('Please enter a valid library name.');
+            return;
+        }
+        
 
         fetch(`http://localhost:8080/api/libraries/update/${libraryId}?newName=${encodeURIComponent(newName)}`, {
             method: 'PUT',
