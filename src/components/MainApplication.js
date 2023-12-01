@@ -124,9 +124,9 @@ function LibraryList() {
     };
 
     return (
-        <div className="sidebar">
+        <div className="sidebar"> 
            {libraries.map((library) => (
-        <button key={library.id} onClick={() => setSelectedLibrary(library)}>
+        <button key={library.id} onClick={() => setSelectedLibrary(library)}> 
          {library.name}
        </button>
         ))}
@@ -138,6 +138,7 @@ function LibraryList() {
             </button>
         </div>
     );
+
 }
 
 
@@ -168,7 +169,6 @@ function Books() {
 
   
     const changeLibraryName = (newName) => {
-     
         console.log('Attempting to change library name to:', newName);
         const libraryId = selectedLibrary?.libraryId; // Optional chaining for safety
         console.log('Attempting to change library name for ID:', libraryId);
@@ -177,6 +177,7 @@ function Books() {
             console.error('libraryId is missing');
             return;
         }
+
 
         if (!selectedLibrary.libraryId) {
             console.error('libraryId is missing');
@@ -214,6 +215,7 @@ function Books() {
             }
             return response.json();
         })
+
         .then(updatedLibrary => {
             const updatedLibraries = libraries.map(lib => 
                 lib.libraryId === updatedLibrary.libraryId ? updatedLibrary : lib
@@ -231,11 +233,18 @@ function Books() {
     useEffect(() => {
         console.log('Libraries state updated:', libraries);
     }, [libraries]);
-    
+
 
  
     const deleteLibrary = () => {
-        const libraryId = selectedLibrary.libraryId; // Ensure this matches the format expected by your backend
+    // [Added] Safety check for selectedLibrary and its libraryId
+    const libraryId = selectedLibrary?.libraryId; 
+
+    // [Added] Check if there's a selected library to delete
+    if (!libraryId) {
+        console.error('No library selected or libraryId is missing');
+        return;
+    }
     
         fetch(`http://localhost:8080/api/libraries/${libraryId}`, {
             method: 'DELETE',
@@ -243,9 +252,13 @@ function Books() {
         .then(response => {
             if (response.status === 204) {
                 // Update the local state to remove the deleted library
-                const updatedLibraries = libraries.filter(lib => lib.id !== libraryId);
+                const updatedLibraries = libraries.filter(lib => lib.libraryId !== libraryId);
                 setLibraries(updatedLibraries);
+
+                // [Added] Reset the selectedLibrary state if the deleted library was the selected one
+            if (selectedLibrary && selectedLibrary.libraryId === libraryId) {
                 setSelectedLibrary(null);
+            }
             } else {
                 console.error('Failed to delete library');
             }
