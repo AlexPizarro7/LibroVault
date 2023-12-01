@@ -43,27 +43,8 @@ function MainApplication() {
   
   
 
-//This is the LibraryList component, this is the sidebar that has the list of libraries.
-//This component uses 'useContext' to access 'LibraryContext' and be able to use its functions 
-/**
- * LibraryList Component
- * 
- * @component
- * @description 
- * Renders a sidebar with a list of libraries associated with a specific user and allows users to add new libraries.
- * It utilizes LibraryContext for accessing and manipulating the library data.
- * 
- * @functionality
- * - Fetches and displays a list of libraries from the database associated with the logged-in user upon component mount.
- * - Provides functionality to add a new library to the database and updates the displayed list accordingly.
- * 
- * @useEffect
- * - Fetches the user's libraries from the database when the component mounts or when the user ID changes.
- * - Utilizes the `fetchLibraries` function to make a GET request to the backend.
- * - Updates the `libraries` state with the fetched data.
- * 
- * @returns {JSX.Element} The rendered sidebar component with library list and add library functionality.
- */
+
+
 function LibraryList() {
     const { libraries, setLibraries, selectedLibrary, setSelectedLibrary, userId } = useContext(LibraryContext);
   
@@ -91,29 +72,6 @@ function LibraryList() {
     }, [userId, setLibraries]); // Dependency array ensures this runs when userId or setLibraries changes
 
 
-/**
- * Adds a new library to the database.
- * 
- * @async
- * @function addLibrary
- * @param {string} name - The name of the library to be added.
- * @description 
- * - Validates the library name to ensure it is provided.
- * - Constructs the library data with the name and associated user ID.
- * - Sends a POST request to the server to add the new library.
- * - On successful addition, updates the local state with the newly added library.
- * - Handles any errors during the fetch operation and logs them.
- * @note 
- * - The userId is currently hardcoded for demonstration purposes. 
- *   In a production environment, it should be dynamically obtained, 
- *   typically from the user's session or authentication context.
- * - The function assumes that the backend API is set up to receive the POST request 
- *   at 'http://localhost:8080/api/libraries' and handle it appropriately.
- * - The function also assumes that the backend will return the newly created library object 
- *   in the response, which is then used to update the local state.
- * - Error handling is implemented for the fetch operation, but additional error handling 
- *   may be required based on specific backend configurations and requirements.
- */
     const addLibrary = async (name) => {
         
 
@@ -138,7 +96,6 @@ function LibraryList() {
         // Check if the userId is provided
         if (!userId) {
             alert('User ID is missing.');
-            return;
         }
 
         const libraryData = {
@@ -168,11 +125,11 @@ function LibraryList() {
 
     return (
         <div className="sidebar">
-            {libraries.map((library, index) => (
-                <button key={index} onClick={() => setSelectedLibrary(library)}>
-                    {library.name}
-                </button>
-            ))}
+           {libraries.map((library) => (
+        <button key={library.id} onClick={() => setSelectedLibrary(library)}>
+         {library.name}
+       </button>
+        ))}
             <button onClick={() => {
                 const name = prompt("Enter library name");
                 if (name) addLibrary(name);
@@ -206,29 +163,20 @@ function Books() {
     const [sortMethod, setSortMethod] = useState
         ('default');
     const [bookId, setBookId] = useState('');
+  
 
-    /**
-     * Changes the name of an existing library.
-     * 
-     * @function changeLibraryName
-     * @param {string} newName - The new name to be assigned to the library.
-     * @description 
-     * Sends a PUT request to the server to update the name of a specified library.
-     * Updates the local state with the new library data.
-     * 
-     * @note 
-     * - Assumes the existence of a `selectedLibrary` context or state variable with an `id` property.
-     * - The `libraryId` should match the format expected by the backend.
-     * - The function relies on the `libraries` state and `setLibraries` method from the context or state.
-     * - Uses `encodeURIComponent` to encode the `newName` to ensure it is URL-safe.
-     * 
-     * @errorHandling 
-     * - Logs an error message if the update request fails or if the server response is not as expected.
-     */
+
+  
     const changeLibraryName = (newName) => {
-        const libraryId = selectedLibrary.libraryId; // Ensure this matches the format expected by your backend
-        console.log("Selected Library:", selectedLibrary);
-        console.log("Library ID:", libraryId);
+     
+        console.log('Attempting to change library name to:', newName);
+        const libraryId = selectedLibrary?.libraryId; // Optional chaining for safety
+        console.log('Attempting to change library name for ID:', libraryId);
+    
+        if (!libraryId) {
+            console.error('libraryId is missing');
+            return;
+        }
 
         if (!selectedLibrary.libraryId) {
             console.error('libraryId is missing');
@@ -248,47 +196,44 @@ function Books() {
             return;
         }
         
-
         fetch(`http://localhost:8080/api/libraries/update/${libraryId}?newName=${encodeURIComponent(newName)}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            if (response.status === 204) {
+                // Handle no content response here
+                console.log('Library updated successfully, but no content returned.');
+                // You might want to update the state optimistically here
+                return null; // Return null to signal that no data is expected
+            }
+            return response.json();
+        })
         .then(updatedLibrary => {
-            // Update the local state with the new library data
-            const updatedLibraries = libraries.map(lib => {
-                if (lib.id === libraryId) {
-                    return updatedLibrary; // Replace with the updated library data
-                }
-                return lib;
-            });
+            const updatedLibraries = libraries.map(lib => 
+                lib.libraryId === updatedLibrary.libraryId ? updatedLibrary : lib
+            );
             setLibraries(updatedLibraries);
+              // If the updated library is the currently selected one, also update the selectedLibrary state
+    if (selectedLibrary && selectedLibrary.libraryId === updatedLibrary.libraryId) {
+        setSelectedLibrary(updatedLibrary);
+    }
         })
         .catch(error => {
             console.error('Error updating library name:', error);
         });
     };
+    useEffect(() => {
+        console.log('Libraries state updated:', libraries);
+    }, [libraries]);
     
 
-    /**
-     * Deletes a library.
-     * 
-     * @function deleteLibrary
-     * @description 
-     * Sends a DELETE request to the server to remove a specified library.
-     * Updates the local state to reflect the deletion.
-     * 
-     * @note 
-     * - Assumes the existence of a `selectedLibrary` context or state variable with an `id` property.
-     * - The `libraryId` should match the format expected by the backend.
-     * - The function relies on the `libraries` state and `setLibraries` method from the context or state.
-     * - It also uses `setSelectedLibrary` to reset the selected library state.
-     * 
-     * @errorHandling 
-     * - Logs an error message if the deletion request fails or if the server response is not as expected.
-     */
+ 
     const deleteLibrary = () => {
         const libraryId = selectedLibrary.libraryId; // Ensure this matches the format expected by your backend
     
@@ -310,26 +255,8 @@ function Books() {
         });
     };
     
-    /**
- * Adds a book to the database and then links it to a specific library.
- * 
- * This function first sends a POST request to add a new book to the database.
- * If successful, it then sends another POST request to add the book's reference
- * to a specified library. It handles both success and error cases, logging
- * appropriate messages and updating the component's state as needed.
- *
- * @param {Object} book - The book object to be added. This is not used directly
- *                        but its properties are destructured to form the bookData.
- * @param {string} book.title - The title of the book.
- * @param {string} book.author - The author of the book.
- * @param {string} [book.translator] - The translator of the book, if any.
- * @param {Date} [book.publicationDate] - The publication date of the book.
- * @param {string} [book.edition] - The edition of the book.
- * @param {string} [book.volumeNumber] - The volume number of the book, if applicable.
- * @param {string} book.genre - The genre of the book.
- * @param {string} [book.subgenre] - The subgenre of the book, if applicable.
- * @param {string} [book.isbn] - The ISBN of the book.
- */
+
+ 
     const addBook = (book) => {
         //Book Data to send to API 
         const bookData = {
@@ -398,19 +325,7 @@ function Books() {
             
             
         
-    /**
-    * Deletes a book from the system and then removes it from a specific library.
-    * This function first checks if the bookId is valid. If not, it logs an error and exits the function.
-    * If the bookId is valid, it proceeds to send a DELETE request to the backend API to remove the book from the system.
-    * 
-    * Upon successful deletion from the system, it then sends another DELETE request to remove the book from the specified library.
-    * 
-    * After successfully removing the book from both the system and the library, it updates the local state to reflect these changes.
-    * If any of the deletion operations fail, it logs the appropriate error messages.
-    * 
-    * @param {Object} bookToDelete - The book object to be deleted.
-    * @param {string} bookToDelete.id - The unique identifier of the book to be deleted.
-    */
+
     const deleteBook = (bookToDelete) => {
         console.log(bookToDelete);
         const bookId = bookToDelete.id;
