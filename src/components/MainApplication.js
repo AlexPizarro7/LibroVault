@@ -307,8 +307,32 @@ function Books() {
         .then((addedBook) => {
             if (addedBook.id) {
                 console.log('New book added successfully with ID:', addedBook.id);
-                // Store the book ID in your component's state
                 setBookId(addedBook.id);
+        
+                // [Added] Variable to hold the updated selected library
+                let updatedSelectedLibrary = null;
+        
+                // Update the local state to include the new book in the selected library
+                const updatedLibraries = libraries.map(lib => {
+                    if (lib.libraryId === selectedLibrary.libraryId) {
+                        // [Modified] Store the updated library in a variable
+                        updatedSelectedLibrary = {
+                            ...lib,
+                            books: [...lib.books, addedBook],
+                        };
+                        return updatedSelectedLibrary;
+                    }
+                    return lib;
+                });
+        
+                // [Modified] Update the selectedLibrary if it's the one being modified
+                if (updatedSelectedLibrary) {
+                    setSelectedLibrary(updatedSelectedLibrary);
+                }
+        
+                // Set the updated libraries array to the state
+                setLibraries(updatedLibraries);
+        
     
                 // Now add the book's DBRef to the library
                 return fetch(`http://localhost:8080/api/libraries/${selectedLibrary.libraryId}/addBook/${addedBook.id}`, {
@@ -356,25 +380,35 @@ function Books() {
                 console.log('Book deleted successfully from the system');
     
                 // Then, remove the book from the specific library
-                fetch(`http://localhost:8080/api/libraries/${selectedLibrary.id}/books/${bookId}`, {
+                fetch(`http://localhost:8080/api/libraries/${selectedLibrary.libraryId}/removeBook/${bookId}`, {
                     method: 'DELETE',
                 })
                 .then(libResponse => {
                     if (libResponse.ok) {
                         console.log('Book removed from the library successfully');
+
+                        let updatedSelectedLibrary = null;
     
                         // Update the local state to reflect these changes
                         const updatedLibraries = libraries.map(lib => {
-                            if (lib.id === selectedLibrary.id) {
-                                return {
+                            if (lib.libraryId === selectedLibrary.libraryId) {
+                                updatedSelectedLibrary = {
                                     ...lib,
                                     books: lib.books.filter(book => book.id !== bookId),
                                 };
+                                return updatedSelectedLibrary;
                             }
                             return lib;
                         });
+                        
+                        // Update the selectedLibrary if it's the one being modified
+                        if (updatedSelectedLibrary) {
+                            setSelectedLibrary(updatedSelectedLibrary);
+                        }
+    
                         setLibraries(updatedLibraries);
                         setEdit(null);
+    
                     } else {
                         console.error('Failed to remove book from the library');
                     }
