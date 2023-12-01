@@ -1,6 +1,6 @@
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 import '../App.css';
-
+import './MainApplication.css';
 
 //This context allows child components to access and modify the app's state
 const LibraryContext = createContext();
@@ -13,7 +13,33 @@ const LibraryContext = createContext();
 function MainApplication() {
     const [libraries, setLibraries] = useState([]);
     const [selectedLibrary, setSelectedLibrary] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  //placeholder ads for the bottom of the page
+  const footerImages = [
+    '/images/googlead2.png',
+    '/images/googlead1.png',
+    '/images/googlead3.png',
+    '/images/googlead5.png',
+    '/images/googlead4.png',
+    '/images/googlead2.png',
+    '/images/googlead1.png',
+    '/images/googlead3.png',
+    '/images/googlead5.png',
+    '/images/googlead4.png',
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Increment the index, and reset to 0 if it exceeds the array length
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === footerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 120000); // 120 seconds interval
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, [footerImages.length]);
     return (
         <LibraryContext.Provider value={{ libraries, setLibraries, selectedLibrary, setSelectedLibrary }}>
             <div className="App">
@@ -22,6 +48,19 @@ function MainApplication() {
                     <LibraryList />
                     {selectedLibrary && <Books />}
                 </div>
+      {/* Footer section */}
+      <div className="footer">
+                {footerImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Footer Image ${index + 1}`}
+                    className={index === currentImageIndex ? 'visible' : 'hidden'}
+                  />
+                ))}
+          </div>
+   
+
             </div>
         </LibraryContext.Provider>
     );

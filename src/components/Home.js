@@ -46,6 +46,11 @@ function Home() {
     '/images/googlead3.png',
     '/images/googlead4.png',
     '/images/googlead5.png',
+    '/images/googlead1.png',
+    '/images/googlead2.png',
+    '/images/googlead3.png',
+    '/images/googlead4.png',
+    '/images/googlead5.png'
   ];
 
   useEffect(() => {
@@ -54,7 +59,7 @@ function Home() {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === footerImages.length - 1 ? 0 : prevIndex + 1
       );
-    }, 60000); // 60 seconds interval
+    }, 120000); // 120 seconds interval
 
     // Cleanup the timer on component unmount
     return () => clearInterval(timer);
