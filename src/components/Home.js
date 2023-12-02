@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; //import navigate used for changing "pages" or to redirect 
-import backgroundImage from '../images/bookshelf.png'; //import the image 
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; //import navigate used for changing "pages" or to redirect  
 import CreateAccount from './CreateAccount'; // Import the CreateAccount component
-import '../LoginPage.css';
+import './Home.css'; //Import home.css for finished styling
+import bookshelfImage from '../images/bookshelf.png'
 
 
 /*"Home Componet is used as the main user interface(the login page) , has the features of log in and create user
@@ -67,7 +67,32 @@ function Home() {
     //} else {
     //  alert('Invalid username or password');
     //}
-  
+
+    //placeholder ads for the bottom of the page
+  const footerImages = [
+    '/images/googlead1.png',
+    '/images/googlead2.png',
+    '/images/googlead3.png',
+    '/images/googlead4.png',
+    '/images/googlead5.png',
+    '/images/googlead1.png',
+    '/images/googlead2.png',
+    '/images/googlead3.png',
+    '/images/googlead4.png',
+    '/images/googlead5.png'
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Increment the index, and reset to 0 if it exceeds the array length
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === footerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 120000); // 120 seconds interval
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, [footerImages.length]);
 
  //when styling this div use "home-container"
  //onChange{(e)} username or password  state variable in response to changes in the input field.
@@ -97,6 +122,67 @@ function Home() {
       <button onClick={toggleCreateAccount}>Create Account</button>
         {/*Conditionally render the create account component based on isCreateAccountVisible*/ }
       {isCreateAccountVisible && <CreateAccount />}
+    </div>
+
+  
+      {/*Eric - Sections added structure pretty straighforward*/}
+      <div className='capsuleBox'>
+       
+        <section className='info-section'>
+          <div className="informationSection">
+            <h2>Organize your Literary World</h2>
+            <p className="paragraph">
+              Keep your entire book collection neatly organized! With our software, effortlessly categorize your books by title, author, genre, and more.
+              Say goodbye to cluttered shelves and hello to an easily navigable digital library.
+            </p>
+            
+          </div>
+          <div className='section1Image'>
+            <img className='firstImage' src={bookshelfImage} alt="Bookshelf" />
+          </div>
+        </section>
+       
+      <section className='info-section2'>
+        <div className='SecondinformationSection'>
+          <h2>Personalized Libraries at your Fingertips</h2>
+          <p className='paragraph'>
+            Create custom libraries to suit your reading habits.Whether you're a fan of fiction, a devotee of documentaries,or a scholar of science, our software
+            lets you curate collections that reflect your unique Literary taste
+          </p>
+        </div>
+        <div className='secondImageTwo'>
+          <img className='secondImage' src={bookshelfImage} alt="Bookshelf"/>
+        </div>
+      </section>
+    
+      <section className='info-section3'>
+        <div className='thirdInformationSection'>
+          <h2>Efficiently Manage Your Collection</h2>
+          <p className='paragraph'>
+              Discover the joy of efficient book managment! Our software offers advanced sorting features, allowing you to quickly locate and manage books. Spend less 
+              time searching and more time reading with our intuiitve database system. 
+          </p>
+        </div>
+        <div className='thirdImageThird'>
+          <img className='thirdImage' src={bookshelfImage} alt="Bookshelf"/>
+        </div>
+      </section>
+      
+
+ </div>
+          {/* Footer section */}
+          <div className="footer">
+                {footerImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Footer Image ${index + 1}`}
+                    className={index === currentImageIndex ? 'visible' : 'hidden'}
+                  />
+                ))}
+          </div>
+   
+    
     </div>
   );
   
