@@ -48,6 +48,13 @@ function MainApplication() {
                     <LibraryList />
                     {selectedLibrary && <Books />}
                 </div>
+                <div className="credits">
+                    <p>Welcome to LibroVault!</p>
+                    <p>Your go-to place for managing your book collection.</p>
+                    <p>Need help? Contact us at support@librovault.com</p>
+                    <p>App Version: 1.0 (Last Updated: November 30, 2023)</p>
+                </div>
+
       {/* Footer section */}
       <div className="footer">
                 {footerImages.map((image, index) => (
@@ -341,21 +348,24 @@ function Books() {
                 <option value="byGenre">Group By Genre</option>
             </select>
 
-            {searchedBooks.map((book, index) => (
-                <div key={index}>
-                    <h4>Title: {book.title}</h4>
-                    <p>Author: {book.author}</p>
-                    <p>Translator: {book.translator}</p>
-                    <p>Pub. Date: {book.publicationDate}</p>
-                    <p>Edition: {book.edition}</p>
-                    <p>Volume: {book.volumeNumber}</p>
-                    <p>Genre: {book.genre}</p>
-                    <p>Subgenre: {book.subgenre}</p>
-                    <p>ISBN: {book.isbn}</p>
-                    <button onClick={() => deleteBook(book)}>Delete book</button>
-                    <button onClick={() => editButton(book)}>Edit book</button>
-                </div>
+            <div className="books-grid">
+                {searchedBooks.map((book, index) => (
+                    <div key={index}>
+                        <h4>Title: {book.title}</h4>
+                        <p>Author: {book.author}</p>
+                        <p>Translator: {book.translator}</p>
+                        <p>Pub. Date: {book.publicationDate}</p>
+                        <p>Edition: {book.edition}</p>
+                        <p>Volume: {book.volumeNumber}</p>
+                        <p>Genre: {book.genre}</p>
+                        <p>Subgenre: {book.subgenre}</p>
+                        <p>ISBN: {book.isbn}</p>
+                        <button onClick={() => deleteBook(book)}>Delete book</button>
+                        <button onClick={() => editButton(book)}>Edit book</button>
+                    </div>
             ))}
+            </div>
+
 
             <div>
                 <input type="text" placeholder="Book Title" value={title} onChange={e => setTitle(e.target.value)} />
