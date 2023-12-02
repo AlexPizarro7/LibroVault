@@ -97,25 +97,25 @@ function CreateAccount() {
     <div className="create-account-container">
       <h2>Create Account</h2>
       <form>
-        <label>Username:</label>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter Username"
         />
 
-        <label>Password:</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter Password"
         />
 
-        <label>Re-enter Password:</label>
         <input
           type="password"
           value={rePassword}
           onChange={(e) => setRePassword(e.target.value)}
+          placeholder="Re-Type Password"
         />
 
         <button type="button" onClick={handleCreateAccount}>

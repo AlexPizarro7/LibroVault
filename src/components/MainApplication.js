@@ -3,11 +3,6 @@ import '../App.css';
 import LibraryContext from './LibraryContext';
 import { useLocation } from 'react-router-dom';
 
-
-
-//This context allows child components to access and modify the app's state
-const LibraryContext = createContext();
-
 //This is the App component, the main component
 //uses UseStat eo create 2 state variables: libraries (list of libraries) and selectedLibrary(the currently selected library)
 
@@ -18,6 +13,7 @@ function MainApplication() {
     const [selectedLibrary, setSelectedLibrary] = useState(null);
     const location = useLocation();
     const [userId, setUserId] = useState(null); // State for userId
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   //placeholder ads for the bottom of the page
   const footerImages = [
