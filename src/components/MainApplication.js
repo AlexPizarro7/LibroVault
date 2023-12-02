@@ -510,12 +510,28 @@ function Books() {
           .then((response) => {
             if (response.ok) {
               console.log('Book updated successfully');
-              // You can update your UI or perform other actions upon successful book update.
+               // Update the book in the library
+               return fetch(`http://localhost:8080/api/libraries/books/${bookId}`, { // [Added] API request to update the book in the library
+               method: 'PUT',
+               headers: {
+                 'Content-Type': 'application/json',
+               },
+               body: JSON.stringify(updatedBookData),
+             });
             } else {
               console.error('Failed to update book');
               // Handle errors and provide user feedback for failed book update.
             }
           })
+          .then((libraryResponse) => {
+            if (libraryResponse.ok) {
+                console.log('Book updated in library successfully');
+                // Update UI or state as needed
+            } else {
+                console.error('Failed to update book in library');
+                // Handle errors and provide user feedback for failed library update.
+            }
+        })
           .catch((error) => {
             console.error('Error:', error);
             // Handle network errors or other issues.
