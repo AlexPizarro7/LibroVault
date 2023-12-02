@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 
 
 //This context allows child components to access and modify the app's state
-
+const LibraryContext = createContext();
 
 //This is the App component, the main component
 //uses UseStat eo create 2 state variables: libraries (list of libraries) and selectedLibrary(the currently selected library)
@@ -18,7 +18,21 @@ function MainApplication() {
     const [selectedLibrary, setSelectedLibrary] = useState(null);
     const location = useLocation();
     const [userId, setUserId] = useState(null); // State for userId
-  
+
+  //placeholder ads for the bottom of the page
+  const footerImages = [
+    '/images/googlead2.png',
+    '/images/googlead1.png',
+    '/images/googlead3.png',
+    '/images/googlead5.png',
+    '/images/googlead4.png',
+    '/images/googlead2.png',
+    '/images/googlead1.png',
+    '/images/googlead3.png',
+    '/images/googlead5.png',
+    '/images/googlead4.png',
+  ];
+    
     useEffect(() => {
         console.log('location:', location);
         if (location.state?.userId) {
@@ -26,7 +40,18 @@ function MainApplication() {
           setUserId(location.state.userId);
         }
       }, [location.state?.userId]);
-      
+
+      useEffect(() => {
+    const timer = setInterval(() => {
+      // Increment the index, and reset to 0 if it exceeds the array length
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === footerImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 120000); // 120 seconds interval
+
+    // Cleanup the timer on component unmount
+    return () => clearInterval(timer);
+  }, [footerImages.length]);
   
     return (
       <div> {/* This is the opening <div> tag */}
@@ -35,6 +60,24 @@ function MainApplication() {
           <div className="content">
             <LibraryList />
             {selectedLibrary && <Books />}
+          </div>
+                    <div className="credits">
+                    <p>Welcome to LibroVault!</p>
+                    <p>Your go-to place for managing your book collection.</p>
+                    <p>Need help? Contact us at support@librovault.com</p>
+                    <p>App Version: 1.0 (Last Updated: November 30, 2023)</p>
+                </div>
+
+      {/* Footer section */}
+      <div className="footer">
+                {footerImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Footer Image ${index + 1}`}
+                    className={index === currentImageIndex ? 'visible' : 'hidden'}
+                  />
+                ))}
           </div>
         </LibraryContext.Provider>
       </div> 
