@@ -129,6 +129,12 @@ body {
     padding-right: 50px;
 }
 
+.firstImage{
+  width: 700px;
+  height: 363px;
+  object-fit: cover;
+}
+
 .thirdImageThird,
 .section1Image{
     display: flex;

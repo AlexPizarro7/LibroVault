@@ -4,6 +4,7 @@ import CreateAccount from './CreateAccount'; // Import the CreateAccount compone
 import './Home.css'; //Import home.css for finished styling
 import bookshelfImage from '../images/bookshelf.png'
 import backgroundimage from '../images/bookshelf.png'
+import homeImage from '../images/homeImage.png'
 
 
 /*"Home Componet is used as the main user interface(the login page) , has the features of log in and create user
@@ -136,7 +137,7 @@ function Home() {
            
          </div>
          <div className='section1Image'>
-           <img className='firstImage' src={bookshelfImage} alt="Bookshelf" />
+           <img className='firstImage' src={homeImage} alt="Bookshelf" />
          </div>
        </section>
       
