@@ -2,6 +2,7 @@ import React, { useState, useContext, createContext, useEffect} from 'react';
 import '../App.css';
 import LibraryContext from './LibraryContext';
 import { useLocation } from 'react-router-dom';
+import '../MainApplication.css';
 
 //This is the App component, the main component
 //uses UseStat eo create 2 state variables: libraries (list of libraries) and selectedLibrary(the currently selected library)
