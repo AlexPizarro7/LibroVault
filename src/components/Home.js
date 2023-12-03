@@ -5,6 +5,8 @@ import './Home.css'; //Import home.css for finished styling
 import bookshelfImage from '../images/bookshelf.png'
 import backgroundimage from '../images/bookshelf.png'
 import homeImage from '../images/homeImage.png'
+import addBookImage from '../images/add-book-image.png'
+import libraryImg from '../images/library-sidebar.png'
 
 
 /*"Home Componet is used as the main user interface(the login page) , has the features of log in and create user
@@ -150,7 +152,7 @@ function Home() {
          </p>
        </div>
        <div className='secondImageTwo'>
-         <img className='secondImage' src={bookshelfImage} alt="Bookshelf"/>
+         <img className='secondImage' src={addBookImage} alt="Bookshelf"/>
        </div>
      </section>
    
@@ -163,7 +165,7 @@ function Home() {
          </p>
        </div>
        <div className='thirdImageThird'>
-         <img className='thirdImage' src={bookshelfImage} alt="Bookshelf"/>
+         <img className='thirdImage' src={libraryImg} alt="Bookshelf"/>
        </div>
      </section>
      

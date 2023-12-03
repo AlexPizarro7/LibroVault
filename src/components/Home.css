@@ -129,9 +129,17 @@ body {
     padding-right: 50px;
 }
 
+.secondImage,
 .firstImage{
   width: 700px;
   height: 363px;
+  object-fit: cover;
+  border: #1a142a;
+}
+
+.thirdImage{
+  width: 500px;
+  height: 500px;
   object-fit: cover;
 }
 
